@@ -17,7 +17,7 @@
         @endphp
     </div>
 @endif
-    
+    @if(!empty($cartContent) && count($cartContent) > 0)
         <div class="table-responsive cart_info">
             @foreach($cartContent as $v_content)
             <table class="table table-condensed">
@@ -48,7 +48,7 @@
                             <div class="cart_quantity_button">
                                 <form action="{{URL::to('/update-cart-quantity')}}" method="POST">
                                 {{ csrf_field() }}
-                                <input class="cart_quantity_input" type="text" name="cart_quantity" value="{{$v_content->quantity}}"  >
+                                <input class="cart_quantity_input" type="number" min="1" name="cart_quantity" value="{{$v_content->quantity}}"  >
                                 <input type="hidden" value="{{$v_content->id}}" name="rowId_cart" class="form-control">
                                 <input type="submit" value="Cập nhật" name="update_qty" class="btn btn-default btn-sm">
                                 </form>
@@ -73,6 +73,9 @@
             </table>
             @endforeach
         </div>
+        @else
+                <h3 style="color:red;">Hiện tại không có sản phẩm nào trong giỏ hàng</h3>
+            @endif
         
     </div>
     
@@ -85,18 +88,18 @@
         
             <div class="col-sm-6">
                 <div class="total_area">
-                   @php
-    $total = Cart::getTotal();
-    $tax = $total * 0.1; // ví dụ 10% thuế
-    $grandTotal = $total + $tax;
-@endphp
+                                    @php
+                        $total = Cart::getTotal();
+                        $tax = $total * 0.1; // ví dụ 10% thuế
+                        $grandTotal = $total + $tax;
+                    @endphp
 
-<ul>
-    <li>Tổng <span>{{ number_format($total).' '.'vnđ' }}</span></li>
-    <li>Thuế <span>{{ number_format($tax).' '.'vnđ' }}</span></li>
-    <li>Phí vận chuyển <span>Free</span></li>
-    <li>Thành tiền <span>{{ number_format($grandTotal).' '.'vnđ' }}</span></li>
-</ul>
+                    <ul>
+                        <li>Tổng <span>{{ number_format($total).' '.'vnđ' }}</span></li>
+                        <li>Thuế <span>{{ number_format($tax).' '.'vnđ' }}</span></li>
+                        <li>Phí vận chuyển <span>Free</span></li>
+                        <li>Thành tiền <span>{{ number_format($grandTotal).' '.'vnđ' }}</span></li>
+                    </ul>
 
                     
                     <?php

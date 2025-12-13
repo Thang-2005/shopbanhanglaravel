@@ -60,8 +60,11 @@ class CheckoutController extends Controller
     public function checkout(){
     	$cate_product = DB::table('tbl_category_product')->where('category_status','0')->orderby('category_id','desc')->get();
         $brand_product = DB::table('tbl_brand')->where('brand_status','0')->orderby('brand_id','desc')->get(); 
+        $cartContent = Cart::getContent();
 
-    	return view('pages.checkout.show_checkout')->with('category',$cate_product)->with('brand',$brand_product);
+
+    	return view('pages.checkout.show_checkout')->with('category',$cate_product)->with('brand',$brand_product)
+        ->with('cartContent', $cartContent);
     }
    public function save_checkout_customer(Request $request){
     $data = array();
@@ -156,7 +159,7 @@ class CheckoutController extends Controller
     	
     	if($result){
     		Session::put('customer_id',$result->customer_id);
-    		return Redirect::to('/checkout');
+    		return Redirect::to('/trang-chu');
     	}else{
     		return Redirect::to('/login-checkout');
     	}
@@ -195,6 +198,17 @@ class CheckoutController extends Controller
     return redirect()->back()->with('message', 'Cập nhật trạng thái đơn hàng thành công');
 }
 
+    public function delete_order($orderId){
+     $this->AuthLogin();
+    
+     // Xóa chi tiết đơn hàng trước
+     DB::table('tbl_order_details')->where('order_id', $orderId)->delete();
+    
+     // Xóa đơn hàng
+     DB::table('tbl_order')->where('order_id', $orderId)->delete();
+    
+     return Redirect::to('/manage-order')->with('message', 'Xóa đơn hàng thành công');
+    }
 
 
 // -------------------- PURCHASE ORDER --------------------: sửa thông tin đơn hàng của khách đã đăng nhập

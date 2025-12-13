@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="keyword" content="">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+
+
+
+
     <title>Home | E-Shopper</title>
     <link href="{{asset('public/frontend/css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('public/frontend/css/font-awesome.min.css')}}" rel="stylesheet">
@@ -13,6 +21,9 @@
     <link href="{{asset('public/frontend/css/animate.css')}}" rel="stylesheet">
     <link href="{{asset('public/frontend/css/main.css')}}" rel="stylesheet">
     <link href="{{asset('public/frontend/css/responsive.css')}}" rel="stylesheet">
+
+    <script src="{{asset('public/frontend/js/sweetalert.css')}}"></script>
+
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
@@ -110,6 +121,8 @@
                                 
 
                                 <li><a href="{{URL::to('/show-cart')}}"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
+                                <li><a href="{{URL::to('/gio-hang')}}"><i class="fa fa-shopping-cart"></i> Giỏ hàng ajax</a></li>
+
                                 <?php
                                    $customer_id = Session::get('customer_id');
                                    if($customer_id!=NULL){ 
@@ -194,8 +207,8 @@
                                     <button type="button" class="btn btn-default get">Get it now</button>
                                 </div>
                                 <div class="col-sm-6">
-                                    <img src="{{('frontend/images/girl1.jpg')}}" class="girl img-responsive" alt="" />
-                                    <img src="{{('frontend/images/pricing.png')}}"  class="pricing" alt="" />
+                                    <img src="{{('public/frontend/images/girl1.jpg')}}" class="girl img-responsive" alt="" />
+                                    <img src="{{('public/frontend/images/pricing.png')}}"  class="pricing" alt="" />
                                 </div>
                             </div>
                             <div class="item">
@@ -206,8 +219,8 @@
                                     <button type="button" class="btn btn-default get">Get it now</button>
                                 </div>
                                 <div class="col-sm-6">
-                                    <img src="{{('frontend/images/girl2.jpg')}}" class="girl img-responsive" alt="" />
-                                    <img src="{{('frontend/images/pricing.png')}}"  class="pricing" alt="" />
+                                    <img src="{{('public/frontend/images/girl2.jpg')}}" class="girl img-responsive" alt="" />
+                                    <img src="{{('public/frontend/images/pricing.png')}}"  class="pricing" alt="" />
                                 </div>
                             </div>
                             
@@ -219,8 +232,8 @@
                                     <button type="button" class="btn btn-default get">Get it now</button>
                                 </div>
                                 <div class="col-sm-6">
-                                    <img src="{{('frontend/images/girl3.jpg')}}" class="girl img-responsive" alt="" />
-                                    <img src="{{('frontend/images/pricing.png')}}" class="pricing" alt="" />
+                                    <img src="{{('public/frontend/images/girl3.jpg')}}" class="girl img-responsive" alt="" />
+                                    <img src="{{('public/frontend/images/pricing.png')}}" class="pricing" alt="" />
                                 </div>
                             </div>
                             
@@ -296,7 +309,7 @@
                             <div class="video-gallery text-center">
                                 <a href="#">
                                     <div class="iframe-img">
-                                        <img src="{{('frontend/images/iframe1.png')}}" alt="" />
+                                        <img src="{{('public/frontend/images/iframe1.png')}}" alt="" />
                                     </div>
                                     <div class="overlay-icon">
                                         <i class="fa fa-play-circle-o"></i>
@@ -354,7 +367,7 @@
                     </div>
                     <div class="col-sm-3">
                         <div class="address">
-                            <img src="images/home/map.png" alt="" />
+                            <img src="public/frontend/images/map.png" alt="" />
                             <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
                         </div>
                     </div>
@@ -439,13 +452,74 @@
         
     </footer><!--/Footer-->
     
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   
+    <script src="{{asset('public/frontend/js/sweetalert.js')}}"></script>
     <script src="{{asset('public/frontend/js/jquery.js')}}"></script>
     <script src="{{asset('public/frontend/js/bootstrap.min.js')}}"></script>
     <script src="{{asset('public/frontend/js/jquery.scrollUp.min.js')}}"></script>
     <script src="{{asset('public/frontend/js/price-range.js')}}"></script>
     <script src="{{asset('public/frontend/js/jquery.prettyPhoto.js')}}"></script>
     <script src="{{asset('public/frontend/js/main.js')}}"></script>
+
+    <script>
+$(document).ready(function(){
+
+    $('.add-to-cart').click(function(){
+        
+         var id = $(this).data('id_product');
+        
+        var cart_product_id    = $('.cart_product_id_' + id).val();
+        var cart_product_name  = $('.cart_product_name_' + id).val();
+        var cart_product_image = $('.cart_product_image_' + id).val();
+        var cart_product_price = $('.cart_product_price_' + id).val();
+        var cart_product_qty   = $('.cart_product_qty_' + id).val();
+        var _token             = $('input[name="_token"]').val();
+       
+         $.ajax({
+             url: "{{ url('/add-cart-ajax') }}",
+             method: "POST",
+            data: {
+                cart_product_id: cart_product_id,
+                cart_product_name: cart_product_name,
+                cart_product_image: cart_product_image,
+                cart_product_price: cart_product_price,
+                cart_product_qty: cart_product_qty,
+                _token: _token
+            },
+            success: function (data) {
+
+                // Tạo chuỗi danh sách sản phẩm
+                var cartList = '';
+                data.cart.forEach(function(item, index){
+                    cartList += (index+1) + '. ' + item.product_name 
+                                + ' - Số lượng: ' + item.product_qty 
+                                + ' - Giá: ' + Number(item.product_price).toLocaleString() + 'đ\n';
+                });
+
+                Swal.fire({
+                    title: 'Đã thêm sản phẩm vào giỏ hàng',
+                    html: '<pre style="text-align:left;">' + cartList + '</pre>',
+                    icon: 'success',
+                    showCancelButton: true,
+                    cancelButtonText: 'Xem tiếp',
+                    confirmButtonText: 'Đi đến giỏ hàng',
+                }).then((result) => {
+                    if(result.isConfirmed){
+                        window.location.href = "{{ url('/gio-hang') }}";
+                    }
+                });
+            }
+
+            
+         });
+
+     });
+
+});
+</script>
+
+
 </body>
 </html>

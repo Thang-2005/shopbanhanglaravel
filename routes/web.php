@@ -8,6 +8,8 @@ use App\Http\Controllers\BrandProduct;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\CouponController;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +74,28 @@ Route::post('/update-cart-quantity', [CartController::class, 'update_cart_quanti
 Route::post('/save-cart', [CartController::class, 'save_cart']);
 Route::get('/show-cart', [CartController::class, 'show_cart']);
 Route::get('/delete-to-cart/{rowId}', [CartController::class, 'delete_to_cart']);
+// AJAX add to cart
+Route::post('/add-cart-ajax', [CartController::class, 'add_cart_ajax'])->name('cart.add');
+Route::get('/gio-hang', [CartController::class, 'gio_hang'])->name('cart.show');
+Route::post('/update-cart', [CartController::class, 'update_cart'])->name('cart.update');
+Route::delete('/delete-cart/{session_id}', [CartController::class, 'delete_cart'])
+    ->name('cart.delete');
+Route::get('/delete-all-cart', [CartController::class, 'delete_all_cart'])->name('cart.delete.all');
+// -------------------- COUPON --------------------
+Route::post('/check-coupon', [CartController::class, 'check_coupon'])->name('check_coupon');
+Route::get('/insert-coupon', [CouponController::class, 'insert_coupon'])->name('insert.coupon');
+Route::post('/insert-coupon-code', [CouponController::class, 'insert_coupon_code'])->name('insert.coupon.code');
+Route::get('/list-coupon', [CouponController::class, 'list_coupon'])->name('list.coupon');
+Route::get('/delete-coupon/{coupon_id}', [CouponController::class, 'delete_coupon'])->name('delete.coupon');
+Route::get('/unset-coupon', [CouponController::class, 'unset_coupon'])->name('unset.coupon');
+
+
+
+
+
+
+
+
 
 // -------------------- CHECKOUT --------------------
 Route::get('/login-checkout', [CheckoutController::class, 'login_checkout']);
@@ -87,6 +111,8 @@ Route::post('/save-checkout-customer', [CheckoutController::class, 'save_checkou
 Route::get('/manage-order', [CheckoutController::class, 'manage_order']);
 Route::get('/view-order/{orderId}', [CheckoutController::class, 'view_order']);
 Route::post('/update-order-status/{order_id}', [CheckoutController::class, 'update_order_status']);
+Route::get('/delete-order/{orderId}', [CheckoutController::class, 'delete_order']);
+
 // -------------------- PURCHASE ORDER --------------------
 Route::get('/my-orders', [CheckoutController::class, 'my_orders'])->name('my.orders');
 //  -------------------- edit SHIPPING --------------------
@@ -112,3 +138,11 @@ Route::get('/login-auth', [AuthController::class, 'login_auth']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// -------------------- delivery--------------------
+Route::get('/delivery', [DeliveryController::class, 'delivery']);
+Route::post('/select-delivery', [DeliveryController::class, 'select_delivery']);
+Route::post('/save-delivery', [DeliveryController::class, 'save_delivery']);
+Route::get('/select-feeship', [DeliveryController::class, 'select_feeship']);
+Route::post('/update-feeship', [DeliveryController::class, 'update_feeship']);
+
+Route::post('/update-delivery', [DeliveryController::class, 'update_delivery']);
