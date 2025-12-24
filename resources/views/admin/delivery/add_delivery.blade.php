@@ -20,29 +20,29 @@
                                     {{ csrf_field() }}
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Chọn thành phố</label>
-                                   <select name="tinh" id="tinh" class="form-control input-sm m-bot15 choose tinh">
+                                   <select name="city" id="city" class="form-control input-sm m-bot15 choose city">
                                            <option value="">--Chọn thành phố--</option>
-                                           @foreach($tinh as $key => $tinh)
-                                            <option value="{{ $tinh->matp }}">{{ $tinh->name_tinh }}</option>
+                                           @foreach($city as $key => $city)
+                                            <option value="{{ $city->matp }}">{{ $city->name_tinh }}</option>
                                              @endforeach
                                     </select>
                                 </div>
                                 
                                  <div class="form-group">
                                     <label for="exampleInputEmail1">--Chọn huyện--</label>
-                                   <select name="huyen" id="huyen" class="form-control input-sm m-bot15 choose huyen">
+                                   <select name="province" id="province" class="form-control input-sm m-bot15 choose province">
                                            <option value="">--Chọn huyện--</option>
-                                           @foreach($huyen as $key => $huyen)
-                                            <option value="{{ $huyen->maqh }}">{{ $huyen->name_huyen }}</option>
+                                           @foreach($province as $key => $province)
+                                            <option value="{{ $province->maqh }}">{{ $province->name_huyen }}</option>
                                              @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">--Chọn xã--</label>
-                                      <select name="xa"  id="xa"class="form-control input-sm m-bot15 choose xa">
+                                      <select name="wards"  id="wards" class="form-control input-sm m-bot15 choose wards">
                                             <option value="">--Chọn xã--</option>
-                                             @foreach($xa as $key => $xa)
-                                            <option value="{{ $xa->maxa }}">{{ $xa->name_xa }}</option>
+                                             @foreach($wards as $key => $wards)
+                                            <option value="{{ $wards->maxa }}">{{ $wards->name_xa }}</option>
                                              @endforeach
                                            
                                             
@@ -54,16 +54,14 @@
                                 </div>
                                 
                                
-                                <button type="button" name="add_devilevi_product" class="btn btn-info add_delivery">Thêm phí vận chuyển</button>
+                                <button type="submit" name="add_devilevi_product" class="btn btn-info add_delivery">Thêm phí vận chuyển</button>
                                 </form>
                             </div>
 
-                            <div id="load_delivery">
-
-                            </div>
-
+                           
                         </div>
                     </section>
 
             </div>
+        </div>  
 @endsection

@@ -229,16 +229,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             });
         });
         $('.add_delivery').click(function(){
-            var tinh = $('.tinh').val();
-            var huyen = $('.huyen').val();
-            var xa = $('.xa').val();
-            var fee_ship = $('.fee_ship').val();
+            var City = $('.city').val();
+            var Province = $('.province').val();
+            var Wards = $('.wards').val();
+            var Fee_ship = $('.fee_ship').val();
             var _token = $('input[name="_token"]').val();
             
             $.ajax({
                 url : '{{URL::to('/save-delivery')}}',
                 method: 'POST',
-                data:{tinh:tinh,huyen:huyen,xa:xa,fee_ship:fee_ship,_token:_token},
+                data:{city:city,province:province,wards:wards,fee_ship:fee_ship,_token:_token},
                 success:function(data){
                     alert('Thêm phí vận chuyển thành công');
                 }
@@ -249,21 +249,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     var _token = $('input[name="_token"]').val();
     var result = '';
     
-    if(action == 'tinh'){
+    if(action == 'city'){
         var matp = $(this).val();
-        result = 'huyen';
+        result = 'province';
         $.ajax({
             url: '{{ URL::to("/select-delivery") }}',
             method: 'POST',
             data: {action: action, matp: matp, _token: _token},
             success: function(data){
                 $('#'+result).html(data);
-                $('#xa').html('<option value="">--Chọn xã--</option>'); // reset xã
+                $('#wards').html('<option value="">--Chọn xã--</option>'); // reset xã
             }
         });
-    } else if(action == 'huyen'){
+    } else if(action == 'province'){
         var maqh = $(this).val();
-        result = 'xa';
+        result = 'wards';
         $.ajax({
             url: '{{ URL::to("/select-delivery") }}',
             method: 'POST',

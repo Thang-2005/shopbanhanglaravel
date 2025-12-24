@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Darryldecode\Cart\Facades\CartFacade as Cart;
+use App\Models\City,
+        Province,
+        Wards,
+        Feeship;
 
 use App\Http\Requests;
 use Illuminate\Support\Facades\Redirect;
@@ -59,12 +63,16 @@ class CheckoutController extends Controller
     }
     public function checkout(){
     	$cate_product = DB::table('tbl_category_product')->where('category_status','0')->orderby('category_id','desc')->get();
-        $brand_product = DB::table('tbl_brand')->where('brand_status','0')->orderby('brand_id','desc')->get(); 
+        $brand_product = DB::table('tbl_brand')->where('brand_status','0')->orderby('brand_id','desc')->get();
+        $city = City::orderBy('matp','ASC')->get();
+        $province= Province::orderBy('maqh','ASC')->get();
+        $wards= Wards::orderBy('maxa','ASC')->get();
         $cartContent = Cart::getContent();
+        
 
 
     	return view('pages.checkout.show_checkout')->with('category',$cate_product)->with('brand',$brand_product)
-        ->with('cartContent', $cartContent);
+        ->with('cartContent', $cartContent)->with('city',$city)->with('province',$province)->with('wards',$wards);
     }
    public function save_checkout_customer(Request $request){
     $data = array();

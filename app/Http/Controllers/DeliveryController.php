@@ -3,19 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\tinh;
-use App\Models\huyen;
-use App\Models\xa;
+use App\Models\City;
+use App\Models\Province;
+use App\Models\Wards;
 use App\Models\Feeship;
 
 
 class Deliverycontroller extends Controller
 {
     public function delivery(Request $request){
-        $tinh= tinh::orderby('matp','ASC')->get();
-        $huyen= huyen::orderby('maqh','ASC')->get();
-        $xa= xa::orderby('maxa','ASC')->get();
-        return view('admin.delivery.add_delivery')->with(compact('tinh','huyen','xa'));
+        $city= City::orderby('matp','ASC')->get();
+        $province= Province::orderby('maqh','ASC')->get();
+        $wards= Wards::orderby('maxa','ASC')->get();
+        return view('admin.delivery.add_delivery')->with(compact('city','province','wards'));
 }
     
     // public function select_delivery(Request $request){
@@ -53,20 +53,20 @@ class Deliverycontroller extends Controller
 
     if(isset($data['action'])) {
 
-        if($data['action'] == "Tinh") {
+        if($data['action'] == "city") {
             // Lấy huyện theo tỉnh
-            $select_huyen = Huyen::where('matp', $data['matp'])->orderby('maqh','ASC')->get();
+            $select_huyen = Province::where('matp', $data['matp'])->orderby('maqh','ASC')->get();
             $output .= '<option value="">--Chọn huyện--</option>';
             foreach($select_huyen as $huyen){
                 $output .= '<option value="'.$huyen->maqh.'">'.$huyen->name_huyen.'</option>';
             }
 
-        } elseif($data['action'] == "Huyen") {
+        } elseif($data['action'] == "province") {
             // Lấy xã theo huyện
             // SỬA: kiểm tra tồn tại key 'maqh'
             $maqh = $data['maqh'] ?? null; 
             if($maqh){
-                $select_xa = Xa::where('maqh', $maqh)->orderby('maxa','ASC')->get(); 
+                $select_xa = Wards::where('maqh', $maqh)->orderby('maxa','ASC')->get(); 
                 $output .= '<option value="">--Chọn xã--</option>';
                 foreach($select_xa as $xa){
                     $output .= '<option value="'.$xa->maxa.'">'.$xa->name_xa.'</option>';
@@ -79,20 +79,30 @@ class Deliverycontroller extends Controller
     return $output;
 }
 
-    public function save_delivery(Request $request){
-        $data = $request->all();
-        $fee_ship = new Feeship();
-        $fee_ship->fee_maqh = $data['Huyen'];
-        $fee_ship->fee_maxa = $data['Xa'];
-        $fee_ship->fee_matp = $data['Tinh'];
-        $fee_ship->fee_ship = $data['fee_ship'];
-        $fee_ship->save();
+  public function save_delivery(Request $request)
+{
+    if(!$request->city || !$request->province || !$request->wards){
+        return response()->json([
+            'error' => 'Vui lòng chọn đầy đủ Tỉnh / Huyện / Xã'
+        ], 422);
     }
+
+    $feeship = new Feeship();
+    $feeship->fee_matp = $request->city;
+    $feeship->fee_maqh = $request->province;
+    $feeship->fee_maxa = $request->wards;
+    $feeship->fee_ship = $request->fee_ship;
+    $feeship->save();
+
+    return Redirect()->back()->with('message', 'Thêm phí vận chuyển thành công');
+}
+
+
     
 
 
     public function select_feeship(){
-        $feeship = feeship::orderby('fee_id','DESC')->get();
+        $feeship = Feeship::orderby('fee_id','DESC')->get();
         $output = '';
         $output .= '<table class="table table-striped b-t b-light">
                     <thead>
@@ -106,9 +116,9 @@ class Deliverycontroller extends Controller
                     <tbody>';
         foreach($feeship as $key => $fee){
             $output .= '<tr>
-                        <td>'.$fee->Tinh->name_tinh.'</td>
-                        <td>'.$fee->Huyen->name_huyen.'</td>
-                        <td>'.$fee->Xa->name_xa.'</td>
+                        <td>'.$fee->City->name_tinh.'</td>
+                        <td>'.$fee->Province->name_huyen.'</td>
+                        <td>'.$fee->Wards->name_xa.'</td>
                         <td contenteditable data-feeship_id="'.$fee->fee_id.'" class="fee_feeship_edit">'.number_format($fee->fee_ship,0,','.', ').'</td>
                       </tr>';
         }

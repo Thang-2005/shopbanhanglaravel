@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Xa extends Model
+class Wards extends Model
 {
-      protected $table = 'tbl_xa';
+     protected $table = 'tbl_xa';
     public $timestamps = false;
     protected $primaryKey = 'maxa';
 

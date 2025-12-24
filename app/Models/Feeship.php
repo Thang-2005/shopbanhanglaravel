@@ -12,14 +12,14 @@ class Feeship extends Model
 
     protected $fillable = ['fee_maqh','fee_maxa', 'fee_matp','fee_ship'];
 
-    public function tinh() {
-    return $this->belongsTo('App\Models\Tinh', 'fee_matp', 'matp');
+    public function City() {
+    return $this->belongsTo('App\Models\City', 'fee_matp', 'matp');
 }
-public function huyen() {
-    return $this->belongsTo('App\Models\Huyen', 'fee_maqh', 'maqh');
+public function Province() {
+    return $this->belongsTo('App\Models\Province', 'fee_maqh', 'maqh');
 }
-public function xa() {
-    return $this->belongsTo('App\Models\Xa', 'fee_maxa', 'maxa');
+public function Wards() {
+    return $this->belongsTo('App\Models\Wards', 'fee_maxa', 'maxa');
 }
 
 }
