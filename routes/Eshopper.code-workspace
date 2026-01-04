@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "../../../../xampp/htdocs/Eshopper"
+		},
+		{
+			"path": "../../../../xampp/htdocs/shoplaravel-main"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "disabled",
+		"liveServer.settings.multiRootWorkspaceName": "demo",
+		"CodeGPT.apiKey": "OpenRouter"
+	}
+}

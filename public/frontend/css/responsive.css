@@ -1,0 +1,419 @@
+/* ========================================
+   RESPONSIVE CSS CHO E-SHOPPER
+   ======================================== */
+
+/* ============================================
+   MOBILE FIRST - Điện thoại (< 576px)
+   ============================================ */
+@media (max-width: 575.98px) {
+    
+    /* Header Top */
+    .header_top .contactinfo,
+    .header_top .social-icons {
+        text-align: center;
+        float: none !important;
+        margin-bottom: 10px;
+    }
+    
+    .header_top .contactinfo ul li {
+        display: inline-block;
+        font-size: 12px;
+    }
+    
+    /* Header Middle */
+    .header-middle .logo {
+        text-align: center;
+        float: none !important;
+        margin-bottom: 15px;
+    }
+    
+    .header-middle .logo img {
+        max-width: 180px;
+        height: auto;
+    }
+    
+    .header-middle .btn-group {
+        float: none !important;
+        display: inline-block;
+        margin: 5px;
+    }
+    
+    .header-middle .col-sm-4,
+    .header-middle .col-sm-8 {
+        text-align: center;
+    }
+    
+    /* Shop Menu */
+    .shop-menu {
+        float: none !important;
+        text-align: center;
+    }
+    
+    .shop-menu ul.nav li {
+        display: inline-block;
+        width: 48%;
+        margin-bottom: 10px;
+    }
+    
+    .shop-menu ul.nav li a {
+        font-size: 12px;
+        padding: 8px 5px;
+    }
+    
+    /* Main Menu */
+    .mainmenu {
+        width: 100%;
+        float: none !important;
+    }
+    
+    .mainmenu ul.navbar-nav {
+        margin-top: 10px;
+    }
+    
+    .mainmenu ul.navbar-nav li a {
+        padding: 10px 15px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    /* Search Box */
+    .search_box {
+        width: 100%;
+        margin-top: 15px;
+        padding: 0 15px;
+    }
+    
+    .search_box input[type="text"] {
+        width: 100% !important;
+        margin-bottom: 10px;
+    }
+    
+    .search_box input[type="submit"] {
+        width: 100%;
+    }
+    
+    /* Slider */
+    #slider-carousel .item {
+        padding: 20px 0;
+    }
+    
+    #slider-carousel .carousel-inner h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+    
+    #slider-carousel .carousel-inner h2 {
+        font-size: 18px;
+    }
+    
+    #slider-carousel .carousel-inner p {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+    
+    #slider-carousel .carousel-inner .girl {
+        max-width: 200px;
+        margin: 20px auto;
+    }
+    
+    #slider-carousel .carousel-inner .pricing {
+        display: none;
+    }
+    
+    /* Sidebar */
+    .left-sidebar {
+        margin-bottom: 30px;
+    }
+    
+    .left-sidebar h2 {
+        font-size: 20px;
+    }
+    
+    /* Category Products */
+    .category-products .panel-title a {
+        font-size: 14px;
+    }
+    
+    /* Products */
+    .col-sm-4 {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .product-image-wrapper {
+        margin-bottom: 20px;
+    }
+    
+    .productinfo h2 {
+        font-size: 24px;
+    }
+    
+    /* Footer */
+    .footer-top .col-sm-2,
+    .footer-top .col-sm-7,
+    .footer-top .col-sm-3 {
+        width: 100%;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+    
+    .footer-widget .col-sm-2,
+    .footer-widget .col-sm-3 {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .footer-bottom p {
+        text-align: center;
+        float: none !important;
+        margin-bottom: 10px;
+    }
+    
+    /* Tables */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .cart_info table {
+        min-width: 600px;
+    }
+    
+    /* Buttons */
+    .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    /* Forms */
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-control {
+        height: 45px;
+        font-size: 14px;
+    }
+    
+    textarea.form-control {
+        height: auto;
+    }
+}
+
+/* ============================================
+   TABLET - Máy tính bảng (576px - 767px)
+   ============================================ */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    
+    .header-middle .logo img {
+        max-width: 200px;
+    }
+    
+    .shop-menu ul.nav li {
+        width: auto;
+        padding: 0 10px;
+    }
+    
+    #slider-carousel .carousel-inner h1 {
+        font-size: 32px;
+    }
+    
+    #slider-carousel .carousel-inner h2 {
+        font-size: 20px;
+    }
+    
+    .col-sm-4 {
+        width: 50%;
+        float: left;
+    }
+    
+    .footer-widget .col-sm-2 {
+        width: 50%;
+        float: left;
+    }
+}
+
+/* ============================================
+   TABLET LANDSCAPE (768px - 991px)
+   ============================================ */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    
+    .container {
+        width: 750px;
+    }
+    
+    .header-middle .col-sm-4 {
+        width: 40%;
+    }
+    
+    .header-middle .col-sm-8 {
+        width: 60%;
+    }
+    
+    .shop-menu ul.nav li a {
+        font-size: 13px;
+        padding: 10px;
+    }
+    
+    .left-sidebar {
+        margin-bottom: 20px;
+    }
+    
+    .col-sm-3 {
+        width: 100%;
+    }
+    
+    .col-sm-9 {
+        width: 100%;
+    }
+    
+    .col-sm-4 {
+        width: 33.333%;
+        float: left;
+    }
+    
+    #slider-carousel .carousel-inner .girl {
+        max-width: 300px;
+    }
+}
+
+/* ============================================
+   LAPTOP - Màn hình nhỏ (992px - 1199px)
+   ============================================ */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    
+    .container {
+        width: 970px;
+    }
+    
+    .shop-menu ul.nav li a {
+        padding: 15px 12px;
+        font-size: 13px;
+    }
+    
+    .mainmenu ul.navbar-nav li a {
+        padding: 20px 15px;
+        font-size: 14px;
+    }
+    
+    .productinfo h2 {
+        font-size: 26px;
+    }
+}
+
+/* ============================================
+   DESKTOP - Màn hình lớn (≥ 1200px)
+   ============================================ */
+@media (min-width: 1200px) {
+    
+    .container {
+        width: 1170px;
+    }
+    
+    /* Tối ưu cho màn hình lớn */
+    .product-image-wrapper:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+    }
+}
+
+/* ============================================
+   LANDSCAPE MODE - Chế độ ngang cho mobile
+   ============================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+    
+    #slider-carousel {
+        display: none;
+    }
+    
+    .header_top {
+        display: none;
+    }
+    
+    .mainmenu ul.navbar-nav li a {
+        padding: 10px;
+    }
+}
+
+/* ============================================
+   UTILITIES - Tiện ích responsive
+   ============================================ */
+
+/* Hide/Show elements */
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 767.98px) {
+    .mobile-only {
+        display: block;
+    }
+    
+    .desktop-only {
+        display: none;
+    }
+}
+
+/* Images responsive */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Video responsive */
+.video-responsive {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+}
+
+.video-responsive iframe,
+.video-responsive object,
+.video-responsive embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Touch friendly */
+@media (hover: none) and (pointer: coarse) {
+    a, button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .header_top,
+    .header-bottom,
+    .left-sidebar,
+    footer,
+    .btn {
+        display: none !important;
+    }
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR cho tablet và desktop
+   ============================================ */
+@media (min-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #FE980F;
+        border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #e88a0d;
+    }
+}
