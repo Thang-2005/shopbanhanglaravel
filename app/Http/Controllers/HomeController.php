@@ -10,6 +10,8 @@ use App\Models\Banner;
 
 class HomeController extends Controller
 {
+
+    
     public function index(Request $request)
     {
         $meta_desc = "Đây là trang chủ";
@@ -70,4 +72,9 @@ class HomeController extends Controller
 
         return view('pages.sanpham.search', compact('cate_product','brand_product','search_product'));
     }
+    
+
 }
+
+
+

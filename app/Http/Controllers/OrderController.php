@@ -18,6 +18,65 @@ use App\Models\Coupon;
 
 class OrderController extends Controller
 {
+    public function placeOrder(Request $request)
+    {
+        // Validate dữ liệu
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string',
+            'address' => 'required|string',
+            // ... các field khác
+        ]);
+
+        // Tạo đơn hàng
+        $order = Order::create([
+            'customer_name' => $validated['name'],
+            'customer_email' => $validated['email'],
+            'customer_phone' => $validated['phone'],
+            'customer_address' => $validated['address'],
+            'total' => $request->total,
+            'status' => 'pending',
+        ]);
+
+        // Thêm items vào đơn hàng
+        foreach ($request->items as $item) {
+            $order->items()->create([
+                'product_name' => $item['name'],
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+            ]);
+        }
+
+        // Thông tin khách hàng
+        $customer = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'address' => $validated['address'],
+        ];
+
+        // Đường dẫn file hóa đơn PDF (nếu có)
+        $invoicePath = storage_path('app/invoices/invoice-' . $order->id . '.pdf');
+
+        // Gửi email
+        try {
+            Mail::to($validated['email'])->send(
+                new OrderConfirmation($order, $customer, $invoicePath)
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đặt hàng thành công! Email xác nhận đã được gửi.',
+                'order_id' => $order->id
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đặt hàng thành công nhưng không thể gửi email: ' . $e->getMessage()
+            ], 500);
+        }
+    }
     public function manage_order()
     {
         $order= Order::orderby('created_at','DESC')->get();

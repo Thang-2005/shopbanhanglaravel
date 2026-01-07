@@ -10,10 +10,60 @@ use App\Models\Banner;
 use App\Exports\ExcelExportProduct; 
 use App\Imports\ExcelImportProduct; 
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Admin;
+use App\Models\Product;
 
 
 class ProductController extends Controller
 {
+
+     public function allProduct()
+    {
+        // Lấy admin đang đăng nhập
+        $admin_id = Session::get('admin_id');
+        $admin = Admin::with('role.permissions')->find($admin_id);
+        
+        // Kiểm tra quyền trong controller (tùy chọn)
+        if (!$admin->hasPermission('view_product')) {
+            Session::put('error', 'Bạn không có quyền xem sản phẩm!');
+            return redirect()->back();
+        }
+
+        $all_product = Product::all();
+        
+        return view('admin.product.all_product', compact('all_product', 'admin'));
+    }
+
+    // public function deleteProduct($product_id)
+    // {
+    //     $admin_id = Session::get('admin_id');
+    //     $admin = Admin::with('role.permissions')->find($admin_id);
+        
+    //     if (!$admin->hasPermission('delete_product')) {
+    //         Session::put('error', 'Bạn không có quyền xóa sản phẩm!');
+    //         return redirect()->back();
+    //     }
+
+    //     Product::where('product_id', $product_id)->delete();
+        
+    //     Session::put('message', 'Xóa sản phẩm thành công!');
+    //     return redirect()->back();
+    // }
+    public function deleteProduct($product_id)
+{
+    $admin_id = Session::get('admin_id');
+    $admin = Admin::with('role.permissions')->find($admin_id);
+    
+    if (!$admin->hasPermission('delete_product')) {
+        Session::put('error', 'Bạn không có quyền xóa sản phẩm!');
+        return redirect()->back();
+    }
+    
+    Product::where('product_id', $product_id)->delete();
+        
+        Session::put('message', 'Xóa sản phẩm thành công!');
+        return redirect()->back();
+}
     public function AuthLogin(){
         $admin_id = Session::get('admin_id');
         if($admin_id){

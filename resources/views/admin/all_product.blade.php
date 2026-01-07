@@ -111,15 +111,20 @@
                                 </a>
                             @endif
                         </td>
-                        
+                        @php
+                            $admin_id = Session::get('admin_id');
+                            $admin = App\Models\Admin::with('role.permissions')->find($admin_id);
+                        @endphp
+                        @if($admin && $admin->hasPermission('delete_product'))
                         <td class="text-center" style="vertical-align: middle;">
                             <a href="{{URL::to('/edit-product/'.$pro->product_id)}}" class="btn-action edit" title="Chỉnh sửa">
                                 <i class="fa fa-pencil-square-o"></i>
                             </a>
                             <a onclick="return confirm('Bạn có chắc là muốn xóa sản phẩm này không?')" href="{{URL::to('/delete-product/'.$pro->product_id)}}" class="btn-action delete" title="Xóa">
-                                <i class="fa fa-trash"></i>
+                                <i class="fa fa-trash"></i>Xóa
                             </a>
                         </td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>

@@ -7,13 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 class Role extends Model
 {
     protected $table = 'tbl_roles';
-    public $timestamps = false;
     protected $primaryKey = 'role_id';
+    
+    protected $fillable = [
+        'role_name',
+        'role_desc',
+        'role_status'
+    ];
 
-    protected $fillable = ['role_name','description'];
-
-    public function admin()
+    // Một role có nhiều permissions
+    public function permissions()
     {
-        return $this->belongsToMany(Admin::class, 'admin_roles', 'role_id', 'admin_id');
+        return $this->belongsToMany(
+            Permission::class,
+            'tbl_role_permission',
+            'role_id',
+            'permission_id'
+        );
+    }
+
+    // Một role có nhiều admins
+    public function admins()
+    {
+        return $this->hasMany(Admin::class, 'role_id', 'role_id');
     }
 }

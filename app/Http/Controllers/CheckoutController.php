@@ -4,8 +4,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str; 
+use App\Mail\OrderConfirmation;
+
 use Darryldecode\Cart\Facades\CartFacade as Cart;
 use App\Models\City;
 use App\Models\Province;
@@ -16,6 +22,8 @@ use App\Models\Shipping;
 use App\Models\Order;
 use App\Models\Banner;
 use App\Models\Product;
+use App\Models\Customer;
+
 
 
 
@@ -404,75 +412,212 @@ public function unset_fee()
 
 }
 
+// public function confirm_order(Request $request)
+// {
+//     $request->validate([
+//         'shipping_name'    => 'required',
+//         'shipping_phone'   => 'required',
+//         'shipping_email'   => 'required|email',
+//         'shipping_address' => 'required',
+//     ]);
+
+//     $cart_data = Session::get('cart');
+//     if (!$cart_data) {
+//         return response()->json(['message' => 'Giỏ hàng trống'], 400);
+//     }
+
+//     // 0️⃣ CHỐT CHẶN: Kiểm tra tồn kho cho TẤT CẢ sản phẩm trong giỏ
+//     foreach ($cart_data as $cart) {
+//         $product = DB::table('tbl_product')->where('product_id', $cart['product_id'])->first();
+        
+//         if (!$product || $cart['product_qty'] > $product->product_quantity) {
+//             $product_name = $cart['product_name'];
+//             $stock = $product ? $product->product_quantity : 0;
+            
+//             return response()->json([
+//                 'status' => 'error',
+//                 'message' => "Sản phẩm [{$product_name}] không đủ hàng (Kho còn: {$stock}). Vui lòng cập nhật lại giỏ hàng!"
+//             ], 400); // Trả về lỗi 400 để AJAX nhảy vào hàm error
+//         }
+//     }
+
+//     // 1️⃣ Lưu shipping (Chỉ chạy khi bước 0 đã vượt qua)
+//     $shipping = Shipping::create([
+//         'shipping_name'    => $request->shipping_name,
+//         'shipping_phone'   => $request->shipping_phone,
+//         'shipping_email'   => $request->shipping_email,
+//         'shipping_notes'   => $request->shipping_notes,
+//         'shipping_address' => $request->shipping_address,
+//         'shipping_method'  => $request->shipping_method,
+//     ]);
+
+//     $customer_id = Session::get('customer_id');
+// if(!$customer_id){
+//     return response()->json([
+//         'status' => 'error',
+//         'message' => 'Bạn cần đăng nhập để đặt hàng!'
+//     ]);
+// }
+
+//     // 2️⃣ Tạo order
+//     $order_code = substr(md5(microtime()), rand(0, 26), 6);
+//     $order = Order::create([
+//         'customer_id' => Session::get('customer_id'),
+//         'shipping_id' => $shipping->shipping_id,
+//         'order_status' => 0, // Đơn hàng mới
+//         'order_code' => $order_code,
+//         'created_at' => now(),
+//     ]);
+
+//     // 3️⃣ Lưu order details
+//     foreach ($cart_data as $cart) {
+//         OrderDetails::create([
+//             'order_code' => $order->order_code,
+//             'product_id' => $cart['product_id'],
+//             'product_name' => $cart['product_name'],
+//             'product_price' => $cart['product_price'],
+//             'product_sales_quantity' => $cart['product_qty'],
+//             'product_coupon' => $request->order_coupon,
+//             'product_feeship' => $request->order_fee,
+//         ]);
+//     }
+//    $customer_id = Session::get('customer_id'); 
+// $customer = Customer::find($customer_id);   
+// $order_details = OrderDetails::where('order_code', $order->order_code)->get(); 
+
+
+//  $pdf = PDF::loadView('admin.print.hoa_don_email', [
+//     'shipping' => $shipping,
+//     'order' => $order,
+//     'order_details' => $order_details,
+//     'customer' => $customer,
+//     'shipping_method' => $shipping->shipping_method,
+//     'discount' => $request->order_coupon ?? 0
+// ]);
+
+// Mail::send('emails.order_confirmation', [
+//     'shipping' => $shipping,
+//     'order' => $order,
+//     'order_details' => $order_details,
+//     'customer' => $customer,
+//     'shipping_method' => $shipping->shipping_method,
+//     'discount' => $request->order_coupon ?? 0
+// ], function($message) use ($shipping, $pdf){
+//     $message->to($shipping->shipping_email, $shipping->shipping_name)
+//             ->subject('Xác nhận đơn hàng')
+//             ->attachData($pdf->output(), "Hoadon.pdf");
+// });
+
+//     // 4️⃣ Xóa session
+//     Session::forget(['cart', 'coupon', 'fee']);
+
+//     return response()->json(['status' => 'success', 'message' => 'Đặt hàng thành công']);
+// }
+
+
 public function confirm_order(Request $request)
 {
+    // 1️⃣ Validate và kiểm tra giỏ hàng
     $request->validate([
-        'shipping_name'    => 'required',
-        'shipping_phone'   => 'required',
-        'shipping_email'   => 'required|email',
-        'shipping_address' => 'required',
+        'shipping_name'    => 'required|string|max:255',
+        'shipping_phone'   => 'required|string|max:255',
+        'shipping_email'   => 'required|email|max:255',
+        'shipping_address' => 'required|string|max:255',
     ]);
 
     $cart_data = Session::get('cart');
-    if (!$cart_data) {
-        return response()->json(['message' => 'Giỏ hàng trống'], 400);
-    }
+    if (!$cart_data) return response()->json(['message' => 'Giỏ hàng trống'], 400);
 
-    // 0️⃣ CHỐT CHẶN: Kiểm tra tồn kho cho TẤT CẢ sản phẩm trong giỏ
     foreach ($cart_data as $cart) {
         $product = DB::table('tbl_product')->where('product_id', $cart['product_id'])->first();
-        
         if (!$product || $cart['product_qty'] > $product->product_quantity) {
-            $product_name = $cart['product_name'];
             $stock = $product ? $product->product_quantity : 0;
-            
             return response()->json([
                 'status' => 'error',
-                'message' => "Sản phẩm [{$product_name}] không đủ hàng (Kho còn: {$stock}). Vui lòng cập nhật lại giỏ hàng!"
-            ], 400); // Trả về lỗi 400 để AJAX nhảy vào hàm error
+                'message' => "Sản phẩm [{$cart['product_name']}] không đủ hàng (Kho còn: {$stock})!"
+            ], 400);
         }
     }
 
-    // 1️⃣ Lưu shipping (Chỉ chạy khi bước 0 đã vượt qua)
+    // 2️⃣ Tạo Shipping
     $shipping = Shipping::create([
         'shipping_name'    => $request->shipping_name,
         'shipping_phone'   => $request->shipping_phone,
         'shipping_email'   => $request->shipping_email,
-        'shipping_notes'   => $request->shipping_notes,
         'shipping_address' => $request->shipping_address,
-        'shipping_method'  => $request->shipping_method,
+        'shipping_notes'   => $request->shipping_notes ?? null,
+        'shipping_method'  => $request->shipping_method ?? 0,
     ]);
 
-    // 2️⃣ Tạo order
+    if (!$shipping || !$shipping->shipping_id) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Lỗi khi lưu thông tin giao hàng!'
+        ], 500);
+    }
+
+    // 3️⃣ Tạo Order
+    $customer_id = Session::get('customer_id');
+    if (!$customer_id) return response()->json(['status'=>'error','message'=>'Bạn cần đăng nhập để đặt hàng!'], 401);
+
     $order_code = substr(md5(microtime()), rand(0, 26), 6);
     $order = Order::create([
-        'customer_id' => Session::get('customer_id'),
+        'customer_id' => $customer_id,
         'shipping_id' => $shipping->shipping_id,
-        'order_status' => 0, // Đơn hàng mới
-        'order_code' => $order_code,
-        'created_at' => now(),
+        'order_status'=> 0,
+        'order_code'  => $order_code,
+        'created_at'  => now(),
     ]);
 
-    // 3️⃣ Lưu order details
+    // 4️⃣ Lưu Order Details
     foreach ($cart_data as $cart) {
         OrderDetails::create([
             'order_code' => $order->order_code,
             'product_id' => $cart['product_id'],
             'product_name' => $cart['product_name'],
-            'product_price' => $cart['product_price'],
+            'product_price'=> $cart['product_price'],
             'product_sales_quantity' => $cart['product_qty'],
-            'product_coupon' => $request->order_coupon,
-            'product_feeship' => $request->order_fee,
+            'product_coupon' => $request->order_coupon ?? null,
+            'product_feeship'=> $request->order_fee ?? 0,
         ]);
     }
 
-    // 4️⃣ Xóa session
-    Session::forget(['cart', 'coupon', 'fee']);
+    // 5️⃣ Lấy dữ liệu để gửi mail
+    $order_details = OrderDetails::where('order_code', $order->order_code)->get();
+    $customer = Customer::find($customer_id);
 
-    return response()->json(['status' => 'success', 'message' => 'Đặt hàng thành công']);
+    // 6️⃣ Tạo PDF hóa đơn
+    $pdf = PDF::loadView('admin.print.print_order', [
+        'shipping'      => $shipping,
+        'order'         => $order,
+        'order_details' => $order_details,
+        'customer'      => $customer,
+        'shipping_method'=> $shipping->shipping_method,
+        'discount'      => $request->order_coupon ?? 0
+    ]);
+
+    // 7️⃣ Gửi mail xác nhận
+    Mail::send('emails.order_confirmation', [
+        'shipping'      => $shipping,
+        'order'         => $order,
+        'order_details' => $order_details,
+        'customer'      => $customer,
+        'shipping_method'=> $shipping->shipping_method,
+        'discount'      => $request->order_coupon ?? 0
+    ], function($message) use ($shipping, $pdf){
+        $message->to($shipping->shipping_email, $shipping->shipping_name)
+                ->subject('Xác nhận đơn hàng')
+                ->attachData($pdf->output(), "Hoadon_{$shipping->shipping_name}.pdf");
+    });
+
+    // 8️⃣ Xóa session giỏ hàng
+    Session::forget(['cart','coupon','fee']);
+
+    return response()->json(['status'=>'success','message'=>'Đặt hàng thành công!']);
 }
 
-    
+
+
    
 
 }

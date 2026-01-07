@@ -13,6 +13,8 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\OrderController;
 use Barryvdh\DomPDF\Facade\PDF;
 use App\Http\Controllers\BannerController;
+use App\Http\Controllers\MailController;
+
 
 
 /*
@@ -25,6 +27,7 @@ use App\Http\Controllers\BannerController;
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/trang-chu', [HomeController::class, 'index']);
 Route::post('/tim-kiem', [HomeController::class, 'search']);
+
 
 // Danh mục sản phẩm trang chủ
 Route::get('/danh-muc-san-pham/{slug_category_product}', [CategoryProductController::class, 'show_category_home']);
@@ -170,4 +173,62 @@ Route::post('/insert-banner', [BannerController::class, 'insert_banner'])->name(
 Route::get('/unactive-banner/{banner_id}', [BannerController::class, 'unactive_banner']);
 Route::get('/active-banner/{banner_id}', [BannerController::class, 'active_banner']);
 Route::get('/delete-banner/{banner_id}', [BannerController::class, 'delete_banner']);
+
+
+
+// Route yêu cầu role Admin
+Route::middleware(['admin.role:admin'])->group(function () {
+    Route::get('/admin/manage-user', [AdminController::class, 'manageUser']);
+    Route::get('/admin/manage-role', [AdminController::class, 'manageRole']);
+});
+
+// Route yêu cầu role Admin hoặc Manager
+Route::middleware(['admin.role:admin,manager'])->group(function () {
+    Route::get('/admin/all-product', [ProductController::class, 'allProduct']);
+    Route::post('/admin/save-product', [ProductController::class, 'saveProduct']);
+});
+
+// Route yêu cầu permission cụ thể
+Route::middleware(['admin.permission:create_product'])->group(function () {
+    Route::get('/admin/add-product', [ProductController::class, 'addProduct']);
+    Route::post('/admin/save-product', [ProductController::class, 'saveProduct']);
+});
+
+Route::middleware(['admin.permission:delete_product'])->group(function () {
+    Route::get('/admin/delete-product/{id}', [ProductController::class, 'deleteProduct']);
+});
+Route::get('/admin/manage-user', [AdminController::class, 'manageUser']);
+// Quản lý vai trò (chỉ admin)
+
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+
+Route::middleware(['admin.role:admin'])->group(function () {
+    // Role routes
+    Route::get('/admin/roles', [RoleController::class, 'list_roles']);
+    Route::get('/admin/add-role', [RoleController::class, 'add_role']);
+    Route::post('/admin/save-role', [RoleController::class, 'save_role']);
+    Route::get('/admin/edit-role/{role_id}', [RoleController::class, 'edit_role']);
+    Route::post('/admin/update-role/{role_id}', [RoleController::class, 'update_role']);
+    Route::get('/admin/delete-role/{role_id}', [RoleController::class, 'delete_role']);
+    Route::get('/admin/active-role/{role_id}', [RoleController::class, 'active_role']);
+    Route::get('/admin/unactive-role/{role_id}', [RoleController::class, 'unactive_role']);
+    
+    // Permission routes
+    Route::get('/admin/permissions', [PermissionController::class, 'list_permissions']);
+    Route::get('/admin/add-permission', [PermissionController::class, 'add_permission']);
+    Route::post('/admin/save-permission', [PermissionController::class, 'save_permission']);
+    Route::get('/admin/edit-permission/{permission_id}', [PermissionController::class, 'edit_permission']);
+    Route::post('/admin/update-permission/{permission_id}', [PermissionController::class, 'update_permission']);
+    Route::get('/admin/delete-permission/{permission_id}', [PermissionController::class, 'delete_permission']);
+});
+
+
+//------------mailcontroller-------
+Route::get('/test-mail', [MailController::class, 'test_mail'])->name('test.mail');
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderConfirmation;
+
+
+
 

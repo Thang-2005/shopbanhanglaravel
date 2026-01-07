@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Statistic; 
+use App\Models\Statistic;
+use App\Models\Admin;    
 use App\Http\Requests;
 use Illuminate\Support\Facades\Redirect;
 session_start();
@@ -96,5 +97,18 @@ public function filter_by_date(Request $request)
         Session::put('admin_name',null);
         Session::put('admin_id',null);
         return Redirect::to('/admin');
+    }
+
+     // Quản lý danh sách người dùng
+    public function manageUser()
+    {
+        // Lấy tất cả admin
+        $admins = Admin::with('role')->get();
+
+        // Lấy admin đang đăng nhập
+        $admin_id = Session::get('admin_id');
+        $admin = Admin::with('role.permissions')->find($admin_id);
+
+        return view('admin.admin.manage_user', compact('admins', 'admin'));
     }
 }

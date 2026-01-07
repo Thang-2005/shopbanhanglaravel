@@ -10,6 +10,12 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'admin.role' => \App\Http\Middleware\CheckAdminRole::class,
+            'admin.permission' => \App\Http\Middleware\CheckAdminPermission::class,
+                ]);
+            })
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })

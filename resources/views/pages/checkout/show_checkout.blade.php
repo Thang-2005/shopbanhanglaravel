@@ -151,13 +151,19 @@
             <td class="cart_price">
                 {{ number_format($item['product_price'],0,',','.') }} đ
             </td>
-            <td class="cart_quantity">
-                <input type="number"
-                       min="1"
-                       name="cart_qty[{{ $item['session_id'] }}]"
-                       value="{{ $item['product_qty'] }}"
-                       class="cart_quantity_input">
-            </td>
+         
+            
+                <td>{{ $item['product_name'] }}</td>
+                <td class="cart_quantity">
+                    <input type="number"
+                        min="1"
+                        name="cart_qty[{{ $item['session_id'] }}]"
+                        value="{{ $item['product_qty'] }}">
+                </td>
+                <td>{{ number_format($item['product_price'],0,',','.') }} đ</td>
+        
+          
+
             <td class="cart_total">
                 {{ number_format($subtotal,0,',','.') }} đ
             </td>
