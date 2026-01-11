@@ -27,15 +27,21 @@
       </div>
     </div>
     <div class="table-responsive">
-                      <?php
-                            $message = Session::get('message');
-                            if($message){
-                                echo '<span class="text-alert">'.$message.'</span>';
-                                Session::put('message',null);
-                            }
-                            ?>
+                      @if(session('message') || session('error'))
+            <div id="flash-message"
+                class="alert {{ session('error') ? 'alert-danger' : 'alert-success' }} text-center">
+                {{ session('error') ?? session('message') }}
+            </div>
+
+            <script>
+                setTimeout(() => {
+                    const msg = document.getElementById('flash-message');
+                    if (msg) msg.remove();
+                }, 2000);
+            </script>
+        @endif
      @if($coupon->count()>0)
-        <h3 class="text-center">Chưa có mã giảm giá nào được tạo.<h3>       
+        <h3 class="text-center">Danh sách mã giảm giá.<h3>       
       <table class="table table-striped b-t b-light">
         <thead>
           <tr>

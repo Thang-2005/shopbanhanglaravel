@@ -6,13 +6,19 @@
                         <header class="panel-heading">
                            Thêm danh mục sản phẩm
                         </header>
-                         <?php
-                            $message = Session::get('message');
-                            if($message){
-                                echo '<span class="text-alert">'.$message.'</span>';
-                                Session::put('message',null);
-                            }
-                            ?>
+                        @if(session('message') || session('error'))
+                            <div id="flash-message"
+                                class="alert {{ session('error') ? 'alert-danger' : 'alert-success' }} text-center">
+                                {{ session('error') ?? session('message') }}
+                            </div>
+
+                            <script>
+                                setTimeout(() => {
+                                    const msg = document.getElementById('flash-message');
+                                    if (msg) msg.remove();
+                                }, 2000);
+                            </script>
+                        @endif
                         <div class="panel-body">
 
                             <div class="position-center">

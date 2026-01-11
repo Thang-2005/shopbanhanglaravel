@@ -115,70 +115,12 @@
             <div class="col-sm-6">
                 <div class="total_area">
                     <h3>Thanh toán giỏ hàng</h3>
-                    <ul>
-                        <li>Tổng: <span>{{ number_format($total, 0, ',', '.') }} đ</span></li>
-                        <li> Mã giảm giá:
-                            <span> 
-                            @if(Session::get('coupon'))
-                                @foreach(Session::get('coupon') as $key => $cou)
-                                    @if($cou['coupon_condition']==1)
-                                       MÃ: {{ $cou['coupon_number'] }} % 
-                                        <br>
-                                        @php
-                                            $total_coupon = ($total * $cou['coupon_number']) / 100;
-                                            echo '  Giảm: '.number_format($total_coupon, 0, ',', '.').' đ<br>';
-                                         
-                                           
-                                        @endphp
-                                            <!-- <p>Tổng giảm:<spam>number_format( $total -= $total_coupon, 0, ',', '.').' đ</span></p> -->
-
-                                    @elseif($cou['coupon_condition']==2)
-                                         MÃ:{{ number_format($cou['coupon_number'], 0, ',', '.') }} đ 
-                                        <br>
-                                        @php
-                                            $total_coupon = $cou['coupon_number'];
-                                            
-                                        @endphp
-                                            <!-- <p>Tổng giảm:<spam>number_format( $total -= $total_coupon; , 0, ',', '.').' đ</span></p> -->
-                                    
-                                    @endif 
-                                    
-                                @endforeach   
-                                </span>
-                            @else
-                                Không có mã
-                            @endif
-                        </li>
-                        <li>Thuế: <span>0 đ</span></li>
-                        <li>Phí vận chuyển: <span>0 đ</span></li>
-                        <li>Thành tiền: 
-                           
-                            @if(Session::get('coupon'))
-                                <span>{{ number_format($total - $total_coupon, 0, ',', '.') }} đ</span>
-                            @else
-                                <span>{{ number_format($total, 0, ',', '.') }} đ</span>
-                            @endif
-                        </li>
-
-
-                    </ul>
-
                     <div class="action-buttons">
-                       
-                        @if(Session::get('customer'))
-                      <a class="btn btn-checkout" href="{{ route('checkout') }}">Thanh toán</a>
+                        @if(Session::get('customer_id'))
+                            <a class="btn btn-default check_out" href="{{ URL::to('/checkout') }}">Thanh toán</a>
                         @else
-                          <a class="btn btn-checkout" href="{{ route('login.checkout') }}">Thanh toán</a>
-                         @endif
-
-                        {{-- Form áp dụng mã giảm giá --}}
-                        <form action="{{ route('check_coupon') }}" method="POST" class="coupon-form">
-                            @csrf
-                            <div class="coupon-input-group">
-                                <input type="text" name="coupon_code" class="form-control" placeholder="Nhập mã giảm giá" required>
-                                <button type="submit" class="btn btn-apply">Áp dụng mã</button>
-                            </div>
-                        </form>
+                            <a class="btn btn-default check_out" href="{{ URL::to('/login-checkout') }}">Thanh toán</a>
+                        @endif
                     </div>
                 </div>
             </div>

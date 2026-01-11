@@ -41,8 +41,16 @@ class CheckoutController extends Controller
             return Redirect::to('admin')->send();
         }
     }
+    public function AuthCustomerLogin() {
+    $customer_id = Session::get('customer_id');
+    if ($customer_id) {
+        return; 
+    } else {
+        return Redirect::to('/login-checkout')->send(); 
+    }
+}
     public function view_order($orderId){
-        $this->AuthLogin();
+        $this->AuthCustomerLogin();
         $order_by_id = DB::table('tbl_order')
         ->join('tbl_customers','tbl_order.customer_id','=','tbl_customers.customer_id')
         ->join('tbl_shipping','tbl_order.shipping_id','=','tbl_shipping.shipping_id')
@@ -82,7 +90,56 @@ class CheckoutController extends Controller
 
 
     }
+    public function edit_customer(Request $request,$customer_id){
+         $this->AuthCustomerLogin();
+         $edit_customer= Customer::where('customer_id',$customer_id)->first();
+            $cate_product = DB::table('tbl_category_product')->where('category_status','0')->orderby('category_id','desc')->get();
+            $brand_product = DB::table('tbl_brand')->where('brand_status','0')->orderby('brand_id','desc')->get();
+            $banner= Banner::where('banner_status', 1)->orderBy('banner_id','DESC')->get();
+            $meta_desc = 'Chỉnh sửa thông tin người dùng';
+            $meta_keyword = 'edit customer';
+            $meta_title = 'Trang thông tin người dùng';
+            $url_canonical = $request->url();
+         if(!$edit_customer) {
+            return Redirect::to('/')->with('error', 'Không tìm thấy người dùng!');
+        }
+
+
+        return view('frontend.customer.edit_customer',compact('cate_product', 'brand_product','edit_customer','meta_desc','meta_keyword','meta_title','url_canonical','banner'));
+    }
+
+public function update_customer(Request $request, $customer_id) {
+    $this->AuthCustomerLogin();
+    $request->validate([
+        'customer_name'     => 'required|string|max:255',
+        'customer_email'    => 'required|email|unique:tbl_customers,customer_email,'.$customer_id.',customer_id',
+        'customer_phone'    => 'required|numeric',
+        'customer_password' => 'nullable|min:6|confirmed', 
+    ], [
+        'customer_email.unique'       => 'Email này đã tồn tại!',
+        'customer_password.confirmed' => 'Mật khẩu xác nhận không trùng khớp!',
+        'customer_password.min'       => 'Mật khẩu phải từ 6 ký tự!',
+    ]);
+
+    $customer = Customer::find($customer_id);
+    if(!$customer) return Redirect::back()->with('error','Người dùng không tồn tại');
+
+    $customer->customer_name = $request->customer_name;
+    $customer->customer_email = $request->customer_email;
+    $customer->customer_phone = $request->customer_phone;
+
+    if($request->customer_password) {
+        $customer->customer_password = md5($request->customer_password);
+    }
+
+    $customer->save();
+
+    Session::put('customer_name', $request->customer_name);
+    return Redirect::to('/')->with('message', 'Cập nhật thông tin thành công!');
+}
+
     public function checkout(Request $request){
+    $this->AuthCustomerLogin();
     	$cate_product = DB::table('tbl_category_product')->where('category_status','0')->orderby('category_id','desc')->get();
         $brand_product = DB::table('tbl_brand')->where('brand_status','0')->orderby('brand_id','desc')->get();
         $city = City::orderBy('matp','ASC')->get();
@@ -103,33 +160,33 @@ class CheckoutController extends Controller
     'cate_product', 'brand_product','cartContent','meta_desc','city','province','wards','meta_keyword','meta_title','url_canonical','banner'));
 
      }
-   public function save_checkout_customer(Request $request){
-    $data = array();
-    $data['customer_id'] = Session::get('customer_id'); // <--- thêm dòng này
-    $data['shipping_name'] = $request->shipping_name;
-    $data['shipping_phone'] = $request->shipping_phone;
-    $data['shipping_email'] = $request->shipping_email;
-    $data['shipping_notes'] = $request->shipping_notes;
-    $data['shipping_address'] = $request->shipping_address;
+//    public function save_checkout_customer(Request $request){
+//     $data = array();
+//     $data['customer_id'] = Session::get('customer_id'); // <--- thêm dòng này
+//     $data['shipping_name'] = $request->shipping_name;
+//     $data['shipping_phone'] = $request->shipping_phone;
+//     $data['shipping_email'] = $request->shipping_email;
+//     $data['shipping_notes'] = $request->shipping_notes;
+//     $data['shipping_address'] = $request->shipping_address;
 
-    $shipping_id = DB::table('tbl_shipping')->insertGetId($data);
+//     $shipping_id = DB::table('tbl_shipping')->insertGetId($data);
 
-    Session::put('shipping_id',$shipping_id);
+//     Session::put('shipping_id',$shipping_id);
     
-    return Redirect::to('/payment');
-}
-    public function payment(){
+//     return Redirect::to('/payment');
+// }
+    // public function payment(){
 
-        $cate_product = DB::table('tbl_category_product')->where('category_status','0')->orderby('category_id','desc')->get();
-        $brand_product = DB::table('tbl_brand')->where('brand_status','0')->orderby('brand_id','desc')->get(); 
-        $cartContent = \Cart::getContent(); // hoặc Cart::getContent() nếu đã dùng alias
+    //     $cate_product = DB::table('tbl_category_product')->where('category_status','0')->orderby('category_id','desc')->get();
+    //     $brand_product = DB::table('tbl_brand')->where('brand_status','0')->orderby('brand_id','desc')->get(); 
+    //     $cartContent = \Cart::getContent(); // hoặc Cart::getContent() nếu đã dùng alias
 
-    return view('pages.checkout.payment')
-            ->with('category', $cate_product)
-            ->with('brand', $brand_product)
-            ->with('cartContent', $cartContent);
+    // return view('pages.checkout.payment')
+    //         ->with('category', $cate_product)
+    //         ->with('brand', $brand_product)
+    //         ->with('cartContent', $cartContent);
 
-    }
+    // }
     public function order_place(Request $request){
     // Insert payment
     $data = [];
@@ -194,11 +251,13 @@ class CheckoutController extends Controller
     	$result = DB::table('tbl_customers')->where('customer_email',$email)->where('customer_password',$password)->first();
     	
     	
-    	if($result){
-    		Session::put('customer_id',$result->customer_id);
-    		return Redirect::to('/checkout');
+    	if($result) {
+        Session::put('customer_id', $result->customer_id);
+        Session::put('customer_name', $result->customer_name);
+        return Redirect::to('/trang-chu')->with('message','Đăng nhập thành công');
+    
     	}else{
-    		return Redirect::to('/login-checkout');
+    		return Redirect::to('/login-checkout')->with('message','Đăng nhập thất bại');
     	}
     }
   
@@ -228,7 +287,7 @@ public function my_orders(Request $request) {
     // 1. Kiểm tra khách hàng đăng nhập
     $customer_id = Session::get('customer_id');
     if(!$customer_id) {
-        return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để xem đơn hàng');
+        return redirect()->route('login.checkout')->with('error', 'Vui lòng đăng nhập để xem đơn hàng');
     }
 
     // 2. Lấy dữ liệu chung cho Layout (Category, Brand, Banner)
@@ -294,18 +353,19 @@ public function my_orders(Request $request) {
 
 
 // Hiển thị form edit
-public function edit_shipping($shipping_id)
+public function edit_shipping( Request $request,$shipping_id)
 {
     $shipping = DB::table('tbl_shipping')->where('shipping_id', $shipping_id)->first();
-
-    // Lấy category & brand nếu layout cần
     $cate_product = DB::table('tbl_category_product')->where('category_status','0')->orderby('category_id','desc')->get(); 
     $brand_product = DB::table('tbl_brand')->where('brand_status','0')->orderby('brand_id','desc')->get(); 
+    $banner = Banner::where('banner_status', 1)->orderBy('banner_id','DESC')->get();
 
-    return view('pages.myorder.edit_shipping')
-            ->with('shipping', $shipping)
-            ->with('category', $cate_product)
-            ->with('brand', $brand_product);
+     $meta_desc = 'Trang chỉnh sửa thông tin gửi hàng';
+    $meta_keyword = 'my-order';
+    $meta_title = 'Đơn hàng của tôi';
+    $url_canonical = $request->url();
+    return view('pages.myorder.edit_shipping',compact('shipping','cate_product','brand_product','banner','meta_desc','meta_keyword','meta_title', 'url_canonical'));
+           
 }
 
 // Xử lý update
@@ -412,109 +472,6 @@ public function unset_fee()
 
 }
 
-// public function confirm_order(Request $request)
-// {
-//     $request->validate([
-//         'shipping_name'    => 'required',
-//         'shipping_phone'   => 'required',
-//         'shipping_email'   => 'required|email',
-//         'shipping_address' => 'required',
-//     ]);
-
-//     $cart_data = Session::get('cart');
-//     if (!$cart_data) {
-//         return response()->json(['message' => 'Giỏ hàng trống'], 400);
-//     }
-
-//     // 0️⃣ CHỐT CHẶN: Kiểm tra tồn kho cho TẤT CẢ sản phẩm trong giỏ
-//     foreach ($cart_data as $cart) {
-//         $product = DB::table('tbl_product')->where('product_id', $cart['product_id'])->first();
-        
-//         if (!$product || $cart['product_qty'] > $product->product_quantity) {
-//             $product_name = $cart['product_name'];
-//             $stock = $product ? $product->product_quantity : 0;
-            
-//             return response()->json([
-//                 'status' => 'error',
-//                 'message' => "Sản phẩm [{$product_name}] không đủ hàng (Kho còn: {$stock}). Vui lòng cập nhật lại giỏ hàng!"
-//             ], 400); // Trả về lỗi 400 để AJAX nhảy vào hàm error
-//         }
-//     }
-
-//     // 1️⃣ Lưu shipping (Chỉ chạy khi bước 0 đã vượt qua)
-//     $shipping = Shipping::create([
-//         'shipping_name'    => $request->shipping_name,
-//         'shipping_phone'   => $request->shipping_phone,
-//         'shipping_email'   => $request->shipping_email,
-//         'shipping_notes'   => $request->shipping_notes,
-//         'shipping_address' => $request->shipping_address,
-//         'shipping_method'  => $request->shipping_method,
-//     ]);
-
-//     $customer_id = Session::get('customer_id');
-// if(!$customer_id){
-//     return response()->json([
-//         'status' => 'error',
-//         'message' => 'Bạn cần đăng nhập để đặt hàng!'
-//     ]);
-// }
-
-//     // 2️⃣ Tạo order
-//     $order_code = substr(md5(microtime()), rand(0, 26), 6);
-//     $order = Order::create([
-//         'customer_id' => Session::get('customer_id'),
-//         'shipping_id' => $shipping->shipping_id,
-//         'order_status' => 0, // Đơn hàng mới
-//         'order_code' => $order_code,
-//         'created_at' => now(),
-//     ]);
-
-//     // 3️⃣ Lưu order details
-//     foreach ($cart_data as $cart) {
-//         OrderDetails::create([
-//             'order_code' => $order->order_code,
-//             'product_id' => $cart['product_id'],
-//             'product_name' => $cart['product_name'],
-//             'product_price' => $cart['product_price'],
-//             'product_sales_quantity' => $cart['product_qty'],
-//             'product_coupon' => $request->order_coupon,
-//             'product_feeship' => $request->order_fee,
-//         ]);
-//     }
-//    $customer_id = Session::get('customer_id'); 
-// $customer = Customer::find($customer_id);   
-// $order_details = OrderDetails::where('order_code', $order->order_code)->get(); 
-
-
-//  $pdf = PDF::loadView('admin.print.hoa_don_email', [
-//     'shipping' => $shipping,
-//     'order' => $order,
-//     'order_details' => $order_details,
-//     'customer' => $customer,
-//     'shipping_method' => $shipping->shipping_method,
-//     'discount' => $request->order_coupon ?? 0
-// ]);
-
-// Mail::send('emails.order_confirmation', [
-//     'shipping' => $shipping,
-//     'order' => $order,
-//     'order_details' => $order_details,
-//     'customer' => $customer,
-//     'shipping_method' => $shipping->shipping_method,
-//     'discount' => $request->order_coupon ?? 0
-// ], function($message) use ($shipping, $pdf){
-//     $message->to($shipping->shipping_email, $shipping->shipping_name)
-//             ->subject('Xác nhận đơn hàng')
-//             ->attachData($pdf->output(), "Hoadon.pdf");
-// });
-
-//     // 4️⃣ Xóa session
-//     Session::forget(['cart', 'coupon', 'fee']);
-
-//     return response()->json(['status' => 'success', 'message' => 'Đặt hàng thành công']);
-// }
-
-
 public function confirm_order(Request $request)
 {
     // 1️⃣ Validate và kiểm tra giỏ hàng
@@ -583,33 +540,62 @@ public function confirm_order(Request $request)
     }
 
     // 5️⃣ Lấy dữ liệu để gửi mail
-    $order_details = OrderDetails::where('order_code', $order->order_code)->get();
-    $customer = Customer::find($customer_id);
+$order_details = OrderDetails::where('order_code', $order->order_code)->get();
+$customer = Customer::find($customer_id);
 
-    // 6️⃣ Tạo PDF hóa đơn
-    $pdf = PDF::loadView('admin.print.print_order', [
-        'shipping'      => $shipping,
-        'order'         => $order,
-        'order_details' => $order_details,
-        'customer'      => $customer,
-        'shipping_method'=> $shipping->shipping_method,
-        'discount'      => $request->order_coupon ?? 0
-    ]);
+// 1. Tính toán Total, Discount và Feeship TRƯỚC khi tạo PDF và Mail
+$total = 0;
+$product_feeship = 0;
+$product_coupon = 'no';
 
-    // 7️⃣ Gửi mail xác nhận
-    Mail::send('emails.order_confirmation', [
-        'shipping'      => $shipping,
-        'order'         => $order,
-        'order_details' => $order_details,
-        'customer'      => $customer,
-        'shipping_method'=> $shipping->shipping_method,
-        'discount'      => $request->order_coupon ?? 0
-    ], function($message) use ($shipping, $pdf){
-        $message->to($shipping->shipping_email, $shipping->shipping_name)
-                ->subject('Xác nhận đơn hàng')
-                ->attachData($pdf->output(), "Hoadon_{$shipping->shipping_name}.pdf");
-    });
+foreach ($order_details as $details) {
+    $total += $details->product_price * $details->product_sales_quantity;
+    $product_feeship = $details->product_feeship; // Lấy phí ship từ chi tiết đơn hàng
+    $product_coupon = $details->product_coupon;   // Lấy mã coupon từ chi tiết đơn hàng
+}
 
+// 2. Tính toán tiền giảm giá dựa trên coupon thực tế (Giống hàm Admin)
+$coupon = \App\Models\Coupon::where('coupon_code', $product_coupon)->first();
+$discount = 0;
+if ($coupon) {
+    if ($coupon->coupon_condition == 1) { // Giảm theo %
+        $discount = ($total * $coupon->coupon_number) / 100;
+    } else { // Giảm theo tiền mặt
+        $discount = $coupon->coupon_number;
+    }
+}
+$discount = min($discount, $total); // Đảm bảo không giảm quá tổng tiền
+
+// 3. Hình thức thanh toán
+$shipping_method_text = ($shipping->shipping_method == 0) ? 'Chuyển khoản' : 'Tiền mặt';
+
+// 4. Tạo PDF hóa đơn (Sử dụng các biến đã tính ở trên)
+$pdf = PDF::loadView('admin.print.print_order', [
+    'shipping'         => $shipping,
+    'order'            => $order,
+    'order_details'    => $order_details,
+    'customer'         => $customer,
+    'shipping_method'  => $shipping_method_text,
+    'total'            => $total,
+    'discount'         => $discount,
+    'product_feeship'  => $product_feeship
+]);
+
+// 5. Gửi Mail xác nhận
+Mail::send('emails.order_confirmation', [
+    'shipping'         => $shipping,
+    'order'            => $order,
+    'order_details'    => $order_details,
+    'customer'         => $customer,
+    'total'            => $total,
+    'discount'         => $discount,
+    'product_feeship'  => $product_feeship,
+    'shipping_method'  => $shipping_method_text
+], function($message) use ($shipping, $pdf) {
+    $message->to($shipping->shipping_email)->subject('Xác nhận đơn hàng từ Shop');
+    // Đính kèm file PDF
+    $message->attachData($pdf->output(), "Hoa_don_{$shipping->shipping_name}.pdf");
+});
     // 8️⃣ Xóa session giỏ hàng
     Session::forget(['cart','coupon','fee']);
 

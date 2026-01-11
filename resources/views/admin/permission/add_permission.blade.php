@@ -1,6 +1,3 @@
-{{-- ============================================ --}}
-{{-- 5. ADD PERMISSION - resources/views/admin/permission/add_permission.blade.php --}}
-{{-- ============================================ --}}
 
 @extends('admin_layout')
 @section('admin_content')

@@ -25,7 +25,7 @@ class BannerController extends Controller
     $get_image = $request->file('banner_image');
 
     if (!$get_image){
-        Session::put('message', 'Vui lòng thêm hình ảnh banner');
+        Session::put('error', 'Vui lòng thêm hình ảnh banner');
         return redirect()->back();
     }
     $banner = new Banner();
@@ -55,13 +55,13 @@ class BannerController extends Controller
     public function active_banner($banner_id)
     {
         Banner::where('banner_id', $banner_id)->update(['banner_status' => 0]);
-        return redirect()->back()->with('message', 'Ẩn banner thành công');
+        return redirect()->back()->with('error', 'Ẩn banner thành công');
     }
 
     public function delete_banner($banner_id)
     {
         Banner::where('banner_id', $banner_id)->delete();
-        return redirect()->back()->with('message', 'Xóa banner thành công');
+        return redirect()->back()->with('error', 'Xóa banner thành công');
     }
 
 }

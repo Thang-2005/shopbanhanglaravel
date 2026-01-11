@@ -3,10 +3,19 @@
 
 <div class="container">
     <h2>Đơn hàng của tôi</h2>
-    @if(Session::has('message'))
-        <p class="text-success">{{ Session::get('message') }}</p>
-        {{ Session::forget('message') }}
-    @endif
+   @if(session('message') || session('error'))
+            <div id="flash-message"
+                class="alert {{ session('error') ? 'alert-danger' : 'alert-success' }} text-center">
+                {{ session('error') ?? session('message') }}
+            </div>
+
+            <script>
+                setTimeout(() => {
+                    const msg = document.getElementById('flash-message');
+                    if (msg) msg.remove();
+                }, 2000);
+            </script>
+        @endif
 
     <table class="table table-bordered">
         <thead>
@@ -24,9 +33,11 @@
             </tr>
         </thead>
         <tbody>
+            
+             @php $i = 0; @endphp       
             @foreach($orderDetails as $key =>$ord)
             <tr>
-                <td>{{ $ord->order_details_id }}</td>
+                <td>{{ ++$i }}</td>
                 <td>{{ $ord->product_name }}</td>
                
                 <td> <img src="public/uploads/product/{{ $ord->product_image }}"  width="80"></td>
@@ -58,14 +69,15 @@
                 </td>
                 <td> {{ $ord->shipping_notes }}</td><br>
                 <td>
-                    @if($ord->order_status == 0 || $ord->order_status == 1)
+                    @if(in_array($ord->order_status, [0,1]))
                         <a onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này?')" 
-                           href="{{ URL::to('/-order/'.$ord->order_id) }}" 
-                           class="btn btn-danger btn-sm">Hủy đơn</a>
+                        href="{{ url('/cancel-order/'.$ord->order_id) }}" 
+                        class="btn btn-danger btn-sm">Hủy đơn</a>
                     @else
-                        <p style="color:red;">Không thể hủy</p>
+                        <span style="color:red;">Không thể hủy</span>
                     @endif
                 </td>
+
             </tr>
             @endforeach
         </tbody>

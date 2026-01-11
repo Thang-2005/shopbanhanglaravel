@@ -14,6 +14,8 @@ use App\Http\Controllers\OrderController;
 use Barryvdh\DomPDF\Facade\PDF;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\GoogleCustomerController;
+
 
 
 
@@ -24,7 +26,7 @@ use App\Http\Controllers\MailController;
 */
 
 // -------------------- FRONTEND --------------------
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('/');
 Route::get('/trang-chu', [HomeController::class, 'index']);
 Route::post('/tim-kiem', [HomeController::class, 'search']);
 
@@ -109,6 +111,10 @@ Route::get('/unset-coupon', [CouponController::class, 'unset_coupon'])->name('un
 Route::get('/login-checkout', [CheckoutController::class, 'login_checkout'])->name('login.checkout');
 Route::get('/logout-checkout', [CheckoutController::class, 'logout_checkout']);
 Route::post('/add-customer', [CheckoutController::class, 'add_customer']);
+Route::get('/edit-customer/{customer_id}', [CheckoutController::class, 'edit_customer'])->name('customer.edit');
+Route::post('/update-customer{customer_id}', [CheckoutController::class, 'update_customer'])->name('customer.update');
+
+
 Route::post('/order-place', [CheckoutController::class, 'order_place']);
 Route::post('/login-customer', [CheckoutController::class, 'login_customer']);
 Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
@@ -157,6 +163,8 @@ Route::get('/login-auth', [AuthController::class, 'login_auth']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+
+
 // -------------------- delivery--------------------
 Route::get('/delivery', [DeliveryController::class, 'delivery']);
 Route::post('/select-delivery', [DeliveryController::class, 'select_delivery']);
@@ -178,9 +186,18 @@ Route::get('/delete-banner/{banner_id}', [BannerController::class, 'delete_banne
 
 // Route yêu cầu role Admin
 Route::middleware(['admin.role:admin'])->group(function () {
-    Route::get('/admin/manage-user', [AdminController::class, 'manageUser']);
+    Route::get('/admin/manage-admin', [AdminController::class, 'manageAdmin'])->name('admin.list');
     Route::get('/admin/manage-role', [AdminController::class, 'manageRole']);
+    //thêm và lưu admin
+    Route::get('/admin/add-admin', [AdminController::class, 'add_admin'])->name('admin.add');
+    Route::post('/admin/save-admin', [AdminController::class, 'save_admin'])->name('admin.save');
+
 });
+
+
+Route::delete('/delete-admin/{admin_id}', [AdminController::class, 'delete_admin'])
+     ->name('admin.delete');
+
 
 // Route yêu cầu role Admin hoặc Manager
 Route::middleware(['admin.role:admin,manager'])->group(function () {
@@ -197,8 +214,9 @@ Route::middleware(['admin.permission:create_product'])->group(function () {
 Route::middleware(['admin.permission:delete_product'])->group(function () {
     Route::get('/admin/delete-product/{id}', [ProductController::class, 'deleteProduct']);
 });
-Route::get('/admin/manage-user', [AdminController::class, 'manageUser']);
-// Quản lý vai trò (chỉ admin)
+Route::get('/admin/edit-admin/{admin_id}', [AdminController::class, 'edit_admin'])->name('edit.admin');
+Route::post('/admin/update-admin/{admin_id}', [AdminController::class, 'update_admin'])->name('update.admin');
+
 
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
@@ -222,13 +240,13 @@ Route::middleware(['admin.role:admin'])->group(function () {
     Route::post('/admin/update-permission/{permission_id}', [PermissionController::class, 'update_permission']);
     Route::get('/admin/delete-permission/{permission_id}', [PermissionController::class, 'delete_permission']);
 });
+//---------login google----
+Route::get('/login/google', [GoogleCustomerController::class, 'redirectToGoogle']);
+Route::get('/login/google/callback', [GoogleCustomerController::class, 'handleGoogleCallback']);
+//----------login-fb------
+use App\Http\Controllers\FacebookCustomerController;
 
-
-//------------mailcontroller-------
-Route::get('/test-mail', [MailController::class, 'test_mail'])->name('test.mail');
-use Illuminate\Support\Facades\Mail;
-use App\Mail\OrderConfirmation;
-
-
+Route::get('/login-facebook-customer', [FacebookCustomerController::class, 'redirect_facebook'])->name('login.facebook');
+Route::get('/login-facebook-customer/callback', [FacebookCustomerController::class, 'callback_facebook']);
 
 

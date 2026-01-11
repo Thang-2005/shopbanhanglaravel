@@ -6,13 +6,19 @@
                         <header class="panel-heading">
                            Cập nhật sản phẩm
                         </header>
-                         <?php
-                            $message = Session::get('message');
-                            if($message){
-                                echo '<span class="text-alert">'.$message.'</span>';
-                                Session::put('message',null);
-                            }
-                            ?>
+                         @if(session('message') || session('error'))
+                            <div id="flash-message"
+                                class="alert {{ session('error') ? 'alert-danger' : 'alert-success' }} text-center">
+                                {{ session('error') ?? session('message') }}
+                            </div>
+
+                            <script>
+                                setTimeout(() => {
+                                    const msg = document.getElementById('flash-message');
+                                    if (msg) msg.remove();
+                                }, 2000);
+                            </script>
+                        @endif
                         <div class="panel-body">
 
                             <div class="position-center">
@@ -30,7 +36,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputPassword1">Số lượng sản phẩm</label>
-                                    <textarea style="resize: none" rows="1" class="form-control" name="product_quantity" placeholder="số lượng"></textarea>
+                                  <input type="text" value="{{$pro->product_quantity}}" name="product_quantity" class="form-control" id="exampleInputEmail1" >
+
                                 </div>
                                   <div class="form-group">
                                     <label for="exampleInputEmail1">Hình ảnh sản phẩm</label>

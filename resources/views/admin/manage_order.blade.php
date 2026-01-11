@@ -36,9 +36,10 @@
                             <td>
                                 <select name="order_status[{{ $od->order_code }}]" class="form-control input-sm select-styling">
                                     <option value="0" {{ $od->order_status == 0 ? 'selected' : '' }}>🆕 Đơn hàng mới</option>
-                                    <option value="1" {{ $od->order_status == 1 ? 'selected' : '' }}>⏳ Đang xử lý</option>
-                                    <option value="2" {{ $od->order_status == 2 ? 'selected' : '' }}>✅ Đã giao hàng (Trừ kho)</option>
-                                    <option value="3" {{ $od->order_status == 3 ? 'selected' : '' }}>❌ Đã hủy đơn</option>
+                                    <option value="1" {{ $od->order_status == 1 ? 'selected' : '' }}>⏳ Đã Xác nhận</option>
+                                    <option value="2" {{ $od->order_status == 2 ? 'selected' : '' }}>🚚 Đang giao hàng </option>
+                                    <option value="3" {{ $od->order_status == 3 ? 'selected' : '' }}>✅ Đã giao hàng (Trừ kho)</option>
+                                    <option value="4" {{ $od->order_status == 4 ? 'selected' : '' }}>❌ Đã hủy đơn</option>
                                 </select>
                             </td>
                             <td>{{ date('d/m/Y H:i', strtotime($od->created_at)) }}</td>

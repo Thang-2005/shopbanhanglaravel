@@ -49,13 +49,19 @@
         </div>
 
         <div style="padding: 0 25px;">
-            <?php
-                $message = Session::get('message');
-                if($message){
-                    echo '<div class="alert alert-success" style="border-radius: 10px; border: none; background: #d4edda; color: #155724; font-weight: 500;"><i class="fa fa-check-circle"></i> '.$message.'</div>';
-                    Session::put('message',null);
-                }
-            ?>
+            @if(session('message') || session('error'))
+            <div id="flash-message"
+                class="alert {{ session('error') ? 'alert-danger' : 'alert-success' }} text-center">
+                {{ session('error') ?? session('message') }}
+            </div>
+
+            <script>
+                setTimeout(() => {
+                    const msg = document.getElementById('flash-message');
+                    if (msg) msg.remove();
+                }, 2000);
+            </script>
+        @endif
         </div>
 
         <div class="table-responsive">

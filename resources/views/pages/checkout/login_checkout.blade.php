@@ -17,6 +17,16 @@
 							</span>
 							<button type="submit" class="btn btn-default">Đăng nhập</button>
 						</form>
+						
+						<div class="mt-3 text-center">
+							<a href="{{ route('login.facebook') }}" class="btn btn-primary btn-sm" style="background-color: #3b5998; border: none;">
+								<i class="fab fa-facebook-f me-2"></i> Đăng nhập bằng Facebook
+							</a>
+							<a href="{{ url('/login/google') }}" class="btn btn-danger btn-block">
+							<i class="fa fa-google"></i> Đăng nhập bằng Google
+						</a>
+						</div>
+
 					</div><!--/login form-->
 				</div>
 				<div class="col-sm-1">

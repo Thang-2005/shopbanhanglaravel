@@ -14,18 +14,19 @@
         
         <div class="row w3-res-tb">
             <div class="col-sm-12">
-                @if(Session::has('message'))
-                    <div class="alert alert-success alert-dismissible" style="margin: 15px;">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <i class="fa fa-check-circle"></i> {{ Session::get('message') }}
-                    </div>
-                @endif
-                @if(Session::has('error'))
-                    <div class="alert alert-danger alert-dismissible" style="margin: 15px;">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <i class="fa fa-exclamation-triangle"></i> {{ Session::get('error') }}
-                    </div>
-                @endif
+               @if(session('message') || session('error'))
+            <div id="flash-message"
+                class="alert {{ session('error') ? 'alert-danger' : 'alert-success' }} text-center">
+                {{ session('error') ?? session('message') }}
+            </div>
+
+            <script>
+                setTimeout(() => {
+                    const msg = document.getElementById('flash-message');
+                    if (msg) msg.remove();
+                }, 2000);
+            </script>
+        @endif
             </div>
         </div>
 

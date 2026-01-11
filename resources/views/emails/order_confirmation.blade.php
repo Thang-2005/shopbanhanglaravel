@@ -90,7 +90,7 @@
                         @foreach($order_details as $item)
                         <tr>
                             <td>{{ $item->product_name }}</td>
-                            <td>($item['product_image'])</td>
+                            <td>{{$item['product_image']}}</td>
                             <td style="text-align: center;">{{ $item->product_sales_quantity }}</td>
                             <td style="text-align: right;">{{ number_format($item->product_price,0,',','.') }} đ</td>
                             <td style="text-align: right;">{{ number_format($item->product_price * $item->product_sales_quantity,0,',','.') }} đ</td>
@@ -99,12 +99,24 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" style="text-align: right;"><strong>Tổng cộng:</strong></td>
-                            <td style="text-align: right;">
-                                {{ number_format($order_details->sum(fn($item) => $item->product_price * $item->product_sales_quantity),0,',','.') }} đ
-                            </td>
+                            <td colspan="4">Tiền hàng:</td>
+                            <td>{{ number_format($total,0,',','.') }} đ</td>
                         </tr>
-                    </tfoot>
+                        <tr>
+                            <td colspan="4">Phí vận chuyển:</td>
+                            <td>{{ number_format($product_feeship,0,',','.') }} đ</td>
+                        </tr>
+                        @if($discount > 0)
+                        <tr>
+                            <td colspan="4">Giảm giá:</td>
+                            <td>- {{ number_format($discount,0,',','.') }} đ</td>
+                        </tr>
+                        @endif
+                        <tr>
+                            <td colspan="4"><strong>Tổng thanh toán:</strong></td>
+                            <td><strong>{{ number_format($total + $product_feeship - $discount,0,',','.') }} đ</strong></td>
+                        </tr>
+        </tfoot>
                 </table>
             </div>
             

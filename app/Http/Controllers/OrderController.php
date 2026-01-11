@@ -200,20 +200,24 @@ public function print_order($checkout_code)
         )->stream('order_'.$checkout_code.'.pdf');
     }
 
- public function update_order_status(Request $request) {
-    // Lấy mảng dữ liệu từ form
+public function update_order_status(Request $request) {
+    // Lấy dữ liệu từ form
     $order_data = $request->order_status; 
 
-    // Kiểm tra nếu $order_data không phải mảng (đề phòng lỗi form)
     if (!is_array($order_data)) {
-        return redirect()->back()->with('error', 'Dữ liệu không hợp lệ hoặc trống!');
+        return redirect()->back()->with('error', 'Dữ liệu không hợp lệ!');
     }
 
     foreach($order_data as $order_code => $status_value) {
+        $order_code = (string)$order_code; 
         $status = (int)$status_value;
+
+    
         $order = DB::table('tbl_order')->where('order_code', $order_code)->first();
 
-        // Kiểm tra tồn kho khi admin chọn "Đã giao hàng" (2)
+        if (!$order) continue; 
+
+
         if ($order->order_status != 2 && $status == 2) {
             $order_details = DB::table('tbl_order_details')
                 ->join('tbl_product', 'tbl_order_details.product_id', '=', 'tbl_product.product_id')
@@ -223,24 +227,23 @@ public function print_order($checkout_code)
 
             foreach ($order_details as $item) {
                 if ($item->product_sales_quantity > $item->product_quantity) {
-                    Session::put('error', 'Đơn hàng '.$order_code.' thất bại: ['.$item->product_name.'] không đủ hàng trong kho!');
-                    continue 2; // Bỏ qua đơn hàng này, nhảy sang đơn kế tiếp
+                    Session::flash('error', 'Đơn hàng '.$order_code.' thất bại: ['.$item->product_name.'] không đủ tồn kho!');
+                    continue 2; 
                 }
             }
 
-            // Trừ kho
             foreach ($order_details as $item) {
                 DB::table('tbl_product')
                     ->where('product_id', $item->product_id)
                     ->decrement('product_quantity', $item->product_sales_quantity);
             }
         }
-
-        // Cập nhật trạng thái
-        DB::table('tbl_order')->where('order_code', $order_code)->update(['order_status' => $status]);
+        DB::table('tbl_order')
+            ->where('order_code', '=', $order_code) 
+            ->update(['order_status' => $status]);
     }
 
-    return redirect()->back()->with('message', 'Đã cập nhật tất cả trạng thái đơn hàng!');
+    return redirect()->back()->with('message', 'Đã cập nhật trạng thái và xử lý tồn kho thành công!');
 }
 
 public function add_cart_ajax(Request $request){

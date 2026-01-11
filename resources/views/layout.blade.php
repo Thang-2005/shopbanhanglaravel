@@ -43,11 +43,100 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head><!--/head-->
+<style>
+    /* Khung chứa các nút liên hệ */
+    .contact-widgets {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Định dạng chung cho nút */
+    .contact-btn {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        position: relative; /* Quan trọng để định vị dòng chữ */
+        transition: all 0.3s ease;
+    }
+
+    /* Tạo dòng chữ khi hover */
+    .contact-btn::after {
+        content: attr(data-label); /* Lấy nội dung từ thuộc tính data-label */
+        position: absolute;
+        right: 70px; /* Cách icon một khoảng */
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Hiển thị chữ khi hover */
+    .contact-btn:hover::after {
+        opacity: 1;
+        visibility: visible;
+        right: 65px;
+    }
+
+    .contact-btn img {
+        width: 30px;
+        height: 30px;
+        z-index: 2;
+    }
+
+    /* Màu sắc và Hiệu ứng riêng */
+    .btn-call { background-color: #4CAF50; animation: quick-shake 2s infinite; }
+    .btn-messenger { background-color: #0084ff; }
+    .btn-zalo { background-color: #0068ff; }
+
+    .contact-btn:hover { transform: scale(1.1); }
+
+    @keyframes quick-shake {
+        0%, 80%, 100% { transform: rotate(0); }
+        85% { transform: rotate(15deg); }
+        95% { transform: rotate(-15deg); }
+    }
+</style>
+
+<div class="contact-widgets">
+    <a href="tel:0325927212" class="contact-btn btn-call" data-label="Liên hệ với chúng tôi">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/phone.png" alt="Call">
+    </a>
+
+    <a href="https://m.me/YourPage" target="_blank" class="contact-btn btn-messenger" data-label="Chat với chúng tôi">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/be/Facebook_Messenger_logo_2020.svg" alt="FB">
+    </a>
+
+    <a href="https://zalo.me/0325927212" target="_blank" class="contact-btn btn-zalo" data-label="Chat qua Zalo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo">
+    </a>
+</div>
+  
 
 <body>
 
     <header id="header"><!--header-->
+ 
         <div class="header_top"><!--header_top-->
             <div class="container">
                 <div class="row">
@@ -120,7 +209,7 @@
                                 <?php
                                  }elseif($customer_id!=NULL && $shipping_id!=NULL){
                                  ?>
-                                 <li><a href="{{URL::to('/payment')}}"><i class="fa fa-crosshairs"></i> Thanh toán</a></li>
+                                 <!-- <li><a href="{{URL::to('/payment')}}"><i class="fa fa-crosshairs"></i> Thanh toán</a></li> -->
                                  <?php 
                                 }else{
                                 ?>
@@ -130,23 +219,39 @@
                                 ?>
                                 
 
-                                <li><a href="{{URL::to('/show-cart')}}"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li>
-                                <li><a href="{{URL::to('/gio-hang')}}"><i class="fa fa-shopping-cart"></i> Giỏ hàng ajax</a></li>
+                                <!-- <li><a href="{{URL::to('/show-cart')}}"><i class="fa fa-shopping-cart"></i> Giỏ hàng</a></li> -->
+                                <li><a href="{{URL::to('/gio-hang')}}"><i class="fa fa-shopping-cart"></i> Giỏ hàng </a></li> 
 
-                                <?php
-                                   $customer_id = Session::get('customer_id');
-                                   if($customer_id!=NULL){ 
-                                 ?>
-                                  <li><a href="{{URL::to('/logout-checkout')}}"><i class="fa fa-lock"></i> Đăng xuất</a></li>
-                                
-                                <?php
-                            }else{
-                                 ?>
-                                 <li><a href="{{URL::to('/login-checkout')}}"><i class="fa fa-lock"></i> Đăng nhập</a></li>
-                                 <?php 
-                             }
-                                 ?>
-                               
+                                  @if(Session::get('customer_id')) 
+                                        {{-- Hiển thị tên nếu đã đăng nhập --}}
+                                        <!-- <li><a href="#"><i class="fa fa-user"></i> {{ Session::get('customer_name') }}</a></li> -->
+                                        <div class="btn-group">
+                                        <button type="button" class="btn fa fa-user" data-toggle="dropdown">
+                                            {{ Session::get('customer_name') }}
+                                           
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                          <li>
+                                            <a href="{{ route('customer.edit', ['customer_id' => Session::get('customer_id')]) }}">
+                                                Chỉnh sửa thông tin cá nhân
+                                            </a>
+                                        </li>
+                                            <li><a href="#">UK</a></li>
+                                        </ul>
+                                        </div>
+                                      <li>
+                                            <a href="{{URL::to('/logout-checkout')}}" 
+                                            onclick="return confirm('Bạn có chắc chắn muốn đăng xuất không?')">
+                                            <i class="fa fa-lock"></i> Đăng xuất
+                                            </a>
+                                        </li>
+                                        
+                                    @else
+                                        {{-- Hiển thị nút Đăng nhập nếu chưa có Session --}}
+                                        <li><a href="{{URL::to('/login-checkout')}}"><i class="fa fa-lock"></i> Đăng nhập</a></li>
+                                    @endif
+                                      
+      
                             </ul>
                         </div>
                     </div>
@@ -196,7 +301,40 @@
             </div>
         </div><!--/header-bottom-->
     </header><!--/header-->
-    
+      <!-- @if(session('message') || session('error'))
+            <div id="flash-message"
+                class="alert {{ session('error') ? 'alert-danger' : 'alert-success' }} text-center">
+                {{ session('error') ?? session('message') }}
+            </div>
+
+            <script>
+                setTimeout(() => {
+                    const msg = document.getElementById('flash-message');
+                    if (msg) msg.remove();
+                }, 2000);
+            </script>
+        @endif -->
+        <script>
+    @if(session('message'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: "{{ session('message') }}",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi rồi!',
+            text: "{{ session('error') }}",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    @endif
+</script>
     <section id="slider"><!--slider-->
         <div class="container">
             <div class="row">

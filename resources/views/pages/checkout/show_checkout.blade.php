@@ -15,7 +15,28 @@
     <h1>Vui lòng điền thông tin giao hàng</h1>
 
     <div class="checkout-row">
+    {{-- Thông báo --}}
+<script>
+    @if(session('message'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: "{{ session('message') }}",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    @endif
 
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi rồi!',
+            text: "{{ session('error') }}",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    @endif
+</script>
         <!-- Thông tin gửi hàng -->
         <div class="checkout-col bill-to">
             <h4>Thông tin gửi hàng</h4>
@@ -97,26 +118,6 @@
     $total = 0;
 @endphp
 
-{{-- Thông báo --}}
-@php
-    $message = Session::get('message');
-    if ($message) {
-        echo '<span class="text-alert" style="color:red;">'.$message.'</span>';
-        Session::put('message', null);
-    }
-@endphp
-@if(session('message'))
-    <div class="alert alert-success">
-        {{ alert(session('message')) }}
-    </div>
-@endif
-
-@if(session('error'))
-    <div class="alert alert-danger">
-        {{ alert(session('error')) }}
-    </div>
-@endif
-
 @if(!empty($cartItems))
 {{-- FORM UPDATE GIỎ HÀNG --}}
 <form action="{{route('cart.update')}}" method="POST">
@@ -172,7 +173,7 @@
                     <button type="button" 
                         onclick="if(confirm('Bạn có chắc muốn xóa sản phẩm này?')) { document.getElementById('delete-{{ $item['session_id'] }}').submit(); }" 
                         style="background:none;border:none;">
-                        <i class="fa fa-times" style="color:red;"></i>
+                        <i class="fa fa-times" style="color:red;">Xóa</i>
                     </button>
 
                 @endif
@@ -245,12 +246,6 @@
 
 
                         <li>Thành tiền: 
-<!--                            
-                            @if(Session::get('coupon'))
-                                <span>{{ number_format($total - $total_coupon + Session::get('fee'), 0, ',', '.') }} đ</span>
-                            @else
-                                <span>{{ number_format($total, 0, ',', '.') }} đ</span>
-                            @endif -->
                              @if(Session::get('coupon')==0)
                                 <span>{{ number_format($total +$total*0.1+ Session::get('fee'), 0, ',', '.') }} đ</span>
                              @elseif(Session::get('coupon') && Session::get('fee'))
@@ -285,9 +280,10 @@
 @else
     <div class="alert alert-info">
         Giỏ hàng của bạn đang trống.
+         <a style="color:red"href="{{route('/')}}">Quay lại mua hàng</a>
     </div>
 @endif
-     
+        
 
 {{-- FORM DELETE ĐỘC LẬP --}}
 @foreach($cartItems as $item)
@@ -303,72 +299,12 @@
                  
        
 
-        <!-- Giỏ hàng -->
-        <!-- <div class="checkout-col order-summary">
-            <h3>Sản phẩm của bạn</h3>
-              @php $cart = Session::get('cart'); @endphp
-
-            @if(!empty($cartContent) && count($cartContent) > 0)
-            @php $total = 0; @endphp
-            
-            <p style="color:red;"><strong>Vui lòng xem kỹ thông tin trước khi thanh toán</strong></p>
-            <div class="table-responsive cart_info">
-                <table class="table table-vertical">
-                    <tbody>
-                        <tr>
-                            <th>Tên SP</th>
-                            @foreach($cartContent as $v_content)
-                                <td>{{ $v_content->name }}</td>
-                            @endforeach
-                        </tr>
-                        <tr>
-                            <th>Hình</th>
-                            @foreach($cartContent as $v_content)
-                                <td><img src="{{ URL::to('public/uploads/product/'.$v_content->attributes->image) }}" class="cart-img" alt=""></td>
-                            @endforeach
-                        </tr>
-                        <tr>
-                            <th>Số lượng</th>
-                            @foreach($cartContent as $v_content)
-                                <td>{{ $v_content->quantity }}</td>
-                            @endforeach
-                        </tr>
-                        <tr>
-                            <th>Giá</th>
-                            @foreach($cartContent as $v_content)
-                                <td>{{ number_format($v_content->price, 0, ',', '.') }} VNĐ</td>
-                            @endforeach
-                        </tr>
-                        <tr>
-                            <th>Tổng tiền</th>
-                            @foreach($cartContent as $v_content)
-                                @php
-                                    $subtotal = $v_content->price * $v_content->quantity;
-                                    $total += $subtotal;
-                                @endphp
-                                <td>{{ number_format($subtotal, 0, ',', '.') }} VNĐ</td>
-                            @endforeach
-                        </tr>
-                        <tr class="total-row">
-                            <th>Tổng giỏ hàng</th>
-                            <td colspan="{{ count($cartContent) }}">{{ number_format($total, 0, ',', '.') }} VNĐ</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            @else
-                <p style="color:red;">Hiện tại không có sản phẩm nào trong giỏ hàng</p>
-            @endif
-        </div> -->
+        
 
     </div>
 </div>
 </section>
 
-
-<!-- ==========================
-     Styles
-========================== -->
 <style>
 :root {
     --primary-color: #0d6efd;
@@ -628,12 +564,5 @@
 }
 
 </style>
-
-<!-- ==========================
-     JS
-========================== -->
-<!-- Select2 CSS/JS -->
-
-
 
 @endsection
