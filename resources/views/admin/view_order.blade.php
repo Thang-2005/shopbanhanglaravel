@@ -296,12 +296,13 @@
                 <span class="info-label">Hình thức thanh toán</span>
                 <span class="info-value">
                     @if($shipping->shipping_method == 1)
+                    <span class="payment-badge payment-cash">
+                        <i class="fa fa-money"></i> Tiền mặt
+                    </span>
+                        
+                    @else
                         <span class="payment-badge payment-bank">
                             <i class="fa fa-credit-card"></i> Chuyển khoản
-                        </span>
-                    @else
-                        <span class="payment-badge payment-cash">
-                            <i class="fa fa-money"></i> Tiền mặt
                         </span>
                     @endif
                 </span>

@@ -61,7 +61,7 @@
                 @else
                 <input type="hidden" name="order_coupon" class="order_coupon" value="no">
                 @endif
-
+    
 
                 <div class="form_group">
                     <label for="exampleInputPassword1">Chọn hình thức thanh toán</label>
@@ -240,10 +240,6 @@
                                         <span>{{ number_format(Session::get('fee'), 0, ',', '.') }} đ</span>
                                     </li>
                                @endif
-
-
-
-
 
                         <li>Thành tiền: 
                              @if(Session::get('coupon')==0)

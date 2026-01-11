@@ -38,8 +38,6 @@ class CheckAdminPermission
         return redirect()->to('/admin');
     }
 }
-
-
         Session::put('error', 'Bạn không có quyền thực hiện hành động này!');
         return redirect()->back();
     }

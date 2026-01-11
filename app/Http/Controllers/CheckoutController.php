@@ -567,35 +567,35 @@ if ($coupon) {
 $discount = min($discount, $total); // Đảm bảo không giảm quá tổng tiền
 
 // 3. Hình thức thanh toán
-$shipping_method_text = ($shipping->shipping_method == 0) ? 'Chuyển khoản' : 'Tiền mặt';
+$shipping_method_text = ($shipping->shipping_method == 0) ? 'Tiền mặt' :'Chuyển khoản' ;
 
 // 4. Tạo PDF hóa đơn (Sử dụng các biến đã tính ở trên)
-$pdf = PDF::loadView('admin.print.print_order', [
-    'shipping'         => $shipping,
-    'order'            => $order,
-    'order_details'    => $order_details,
-    'customer'         => $customer,
-    'shipping_method'  => $shipping_method_text,
-    'total'            => $total,
-    'discount'         => $discount,
-    'product_feeship'  => $product_feeship
-]);
+// $pdf = PDF::loadView('admin.print.print_order', [
+//     'shipping'         => $shipping,
+//     'order'            => $order,
+//     'order_details'    => $order_details,
+//     'customer'         => $customer,
+//     'shipping_method'  => $shipping_method_text,
+//     'total'            => $total,
+//     'discount'         => $discount,
+//     'product_feeship'  => $product_feeship
+// ]);
 
 // 5. Gửi Mail xác nhận
-Mail::send('emails.order_confirmation', [
-    'shipping'         => $shipping,
-    'order'            => $order,
-    'order_details'    => $order_details,
-    'customer'         => $customer,
-    'total'            => $total,
-    'discount'         => $discount,
-    'product_feeship'  => $product_feeship,
-    'shipping_method'  => $shipping_method_text
-], function($message) use ($shipping, $pdf) {
-    $message->to($shipping->shipping_email)->subject('Xác nhận đơn hàng từ Shop');
-    // Đính kèm file PDF
-    $message->attachData($pdf->output(), "Hoa_don_{$shipping->shipping_name}.pdf");
-});
+// Mail::send('emails.order_confirmation', [
+//     'shipping'         => $shipping,
+//     'order'            => $order,
+//     'order_details'    => $order_details,
+//     'customer'         => $customer,
+//     'total'            => $total,
+//     'discount'         => $discount,
+//     'product_feeship'  => $product_feeship,
+//     'shipping_method'  => $shipping_method_text
+// ], function($message) use ($shipping, $pdf) {
+//     $message->to($shipping->shipping_email)->subject('Xác nhận đơn hàng từ Shop');
+//     // Đính kèm file PDF
+//     $message->attachData($pdf->output(), "Hoa_don_{$shipping->shipping_name}.pdf");
+// });
     // 8️⃣ Xóa session giỏ hàng
     Session::forget(['cart','coupon','fee']);
 

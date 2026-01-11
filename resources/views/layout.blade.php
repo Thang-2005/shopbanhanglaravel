@@ -23,16 +23,16 @@
 <meta property="og:locale" content="vi_VN" />
 
     <title>Home | E-Shopper</title>
-    <link href="{{asset('public/frontend/css/bootstrap.min.css')}}" rel="stylesheet">
-    <link href="{{asset('public/frontend/css/font-awesome.min.css')}}" rel="stylesheet">
-    <link href="{{asset('public/frontend/css/prettyPhoto.css')}}" rel="stylesheet">
-    <link href="{{asset('public/frontend/css/price-range.css')}}" rel="stylesheet">
-    <link href="{{asset('public/frontend/css/animate.css')}}" rel="stylesheet">
-    <link href="{{asset('public/frontend/css/main.css')}}" rel="stylesheet">
+    <link href="{{asset('frontend/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{asset('frontend/css/font-awesome.min.css')}}" rel="stylesheet">
+    <link href="{{asset('frontend/css/prettyPhoto.css')}}" rel="stylesheet">
+    <link href="{{asset('frontend/css/price-range.css')}}" rel="stylesheet">
+    <link href="{{asset('frontend/css/animate.css')}}" rel="stylesheet">
+    <link href="{{asset('frontend/css/main.css')}}" rel="stylesheet">
      
-    <link href="{{asset('public/frontend/css/responsive.css')}}" rel="stylesheet">
+    <link href="{{asset('frontend/css/responsive.css')}}" rel="stylesheet">
 
-    <script src="{{asset('public/frontend/js/sweetalert.css')}}"></script>
+    <script src="{{asset('frontend/js/sweetalert.css')}}"></script>
 
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
@@ -257,6 +257,7 @@
                     </div>
                 </div>
             </div>
+            
         </div><!--/header-middle-->
     
         <div class="header-bottom"><!--header-bottom-->
@@ -352,11 +353,11 @@
                     <button type="button" class="btn btn-default get">Get it now</button>
                 </div>
                 <div class="col-sm-6">
-                    <img src="{{ asset('public/uploads/banner/' . $ban->banner_image) }}"
+                    <img src="{{ asset('uploads/banner/' . $ban->banner_image) }}"
                         width="100%" 
                         class="img-responsive img" 
                         alt="{{ $ban->banner_desc ?? 'Banner' }}"
-                        onerror="this.src='{{ asset('public/frontend/images/no-image.jpg') }}'">
+                        onerror="this.src='{{ asset('frontend/images/no-image.jpg') }}'">
                 </div>
             </div>
         @endforeach
@@ -441,7 +442,7 @@
                             <div class="video-gallery text-center">
                                 <a href="#">
                                     <div class="iframe-img">
-                                        <img src="{{('public/frontend/images/iframe1.png')}}" alt="" />
+                                        <img src="{{('frontend/images/iframe1.png')}}" alt="" />
                                     </div>
                                     <div class="overlay-icon">
                                         <i class="fa fa-play-circle-o"></i>
@@ -499,7 +500,7 @@
                     </div>
                     <div class="col-sm-3">
                         <div class="address">
-                            <img src="public/frontend/images/map.png" alt="" />
+                            <img src="frontend/images/map.png" alt="" />
                             <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
                         </div>
                     </div>
@@ -587,13 +588,13 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   
-    <script src="{{asset('public/frontend/js/sweetalert.js')}}"></script>
-    <script src="{{asset('public/frontend/js/jquery.js')}}"></script>
-    <script src="{{asset('public/frontend/js/bootstrap.min.js')}}"></script>
-    <script src="{{asset('public/frontend/js/jquery.scrollUp.min.js')}}"></script>
-    <script src="{{asset('public/frontend/js/price-range.js')}}"></script>
-    <script src="{{asset('public/frontend/js/jquery.prettyPhoto.js')}}"></script>
-    <script src="{{asset('public/frontend/js/main.js')}}"></script>
+    <script src="{{asset('frontend/js/sweetalert.js')}}"></script>
+    <script src="{{asset('frontend/js/jquery.js')}}"></script>
+    <script src="{{asset('frontend/js/bootstrap.min.js')}}"></script>
+    <script src="{{asset('frontend/js/jquery.scrollUp.min.js')}}"></script>
+    <script src="{{asset('frontend/js/price-range.js')}}"></script>
+    <script src="{{asset('frontend/js/jquery.prettyPhoto.js')}}"></script>
+    <script src="{{asset('frontend/js/main.js')}}"></script>
 
     <script>
     
