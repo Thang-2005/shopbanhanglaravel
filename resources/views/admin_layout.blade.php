@@ -6,10 +6,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <!-- Bootstrap & CSS -->
-    <link rel="stylesheet" href="{{asset('backend/css/bootstrap.min.css')}}">
-    <link href="{{asset('backend/css/font-awesome.css')}}" rel="stylesheet">
-    <link rel="stylesheet" href="{{asset('backend/css/morris.css')}}" type="text/css"/>
-    <link rel="stylesheet" href="{{asset('backend/css/monthly.css')}}">
+    <link rel="stylesheet" href="{{asset('public/backend/css/bootstrap.min.css')}}">
+    <link href="{{asset('public/backend/css/font-awesome.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset('public/backend/css/morris.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{asset('public/backend/css/monthly.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Google Fonts -->
@@ -492,9 +492,9 @@
         }
     </style>
     
-    <script src="{{asset('backend/js/jquery2.0.3.min.js')}}"></script>
-    <script src="{{asset('backend/js/raphael-min.js')}}"></script>
-    <script src="{{asset('backend/js/morris.js')}}"></script>
+    <script src="{{asset('public/backend/js/jquery2.0.3.min.js')}}"></script>
+    <script src="{{asset('public/backend/js/raphael-min.js')}}"></script>
+    <script src="{{asset('public/backend/js/morris.js')}}"></script>
 </head>
 <body>
     <!-- Sidebar -->
@@ -757,12 +757,12 @@
         </footer>
     </div>
 
-    <script src="{{asset('backend/js/bootstrap.js')}}"></script>
-    <script src="{{asset('backend/js/jquery.dcjqaccordion.2.7.js')}}"></script>
-    <script src="{{asset('backend/js/scripts.js')}}"></script>
-    <script src="{{asset('backend/js/jquery.slimscroll.js')}}"></script>
-    <script src="{{asset('backend/js/jquery.nicescroll.js')}}"></script>
-    <script src="{{asset('backend/js/jquery.scrollTo.js')}}"></script>
+    <script src="{{asset('public/backend/js/bootstrap.js')}}"></script>
+    <script src="{{asset('public/backend/js/jquery.dcjqaccordion.2.7.js')}}"></script>
+    <script src="{{asset('public/backend/js/scripts.js')}}"></script>
+    <script src="{{asset('public/backend/js/jquery.slimscroll.js')}}"></script>
+    <script src="{{asset('public/backend/js/jquery.nicescroll.js')}}"></script>
+    <script src="{{asset('public/backend/js/jquery.scrollTo.js')}}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 
